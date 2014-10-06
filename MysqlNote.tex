@@ -1,0 +1,232 @@
+\documentclass[UTF8]{ctexart}
+\setCJKmainfont{KaiTi}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+%alsolanguage=Java, 
+alsolanguage=SQL, 
+%language={[ISO]C++},       %language为，还有{[Visual]C++}  
+%alsolanguage=[ANSI]C,      %可以添加很多个alsolanguage,如alsolanguage=matlab,alsolanguage=VHDL等  
+%alsolanguage= tcl,  
+alsolanguage= XML,  
+tabsize=4, %  
+frame=shadowbox, %把代码用带有阴影的框圈起来  
+commentstyle=\color{red!50!green!50!blue!50},%浅灰色的注释  
+rulesepcolor=\color{red!20!green!20!blue!20},%代码块边框为淡青色  
+keywordstyle=\color{blue!90}\bfseries, %代码关键字的颜色为蓝色，粗体  
+showstringspaces=false,%不显示代码字符串中间的空格标记  
+stringstyle=\ttfamily, % 代码字符串的特殊格式  
+keepspaces=true, %  
+breakindent=22pt, %  
+numbers=left,%左侧显示行号 往左靠,还可以为right，或none，即不加行号  
+stepnumber=1,%若设置为2，则显示行号为1,3,5，即stepnumber为公差,默认stepnumber=1  
+%numberstyle=\tiny, %行号字体用小号  
+numberstyle={\color[RGB]{0,192,192}\tiny} ,%设置行号的大小，大小有tiny,scriptsize,footnotesize,small,normalsize,large等  
+numbersep=8pt,  %设置行号与代码的距离，默认是5pt  
+basicstyle=\footnotesize, % 这句设置代码的大小  
+showspaces=false, %  
+flexiblecolumns=true, %  
+breaklines=true, %对过长的代码自动换行  
+breakautoindent=true,%  
+breakindent=4em, %  
+%escapebegin=\begin{CJK*}{GBK}{hei},escapeend=\end{CJK*},  
+aboveskip=1em, %代码块边框  
+tabsize=2,  
+showstringspaces=false, %不显示字符串中的空格  
+backgroundcolor=\color[RGB]{245,245,244},   %代码背景色  
+%backgroundcolor=\color[rgb]{0.91,0.91,0.91}    %添加背景色  
+escapeinside=``,  %在``里显示中文  
+%% added by http://bbs.ctex.org/viewthread.php?tid=53451  
+fontadjust,  
+captionpos=t,  
+framextopmargin=2pt,framexbottommargin=2pt,abovecaptionskip=-3pt,belowcaptionskip=3pt,  
+xleftmargin=4em,xrightmargin=4em, % 设定listing左右的空白  
+texcl=true,% 设定中文冲突，断行，列模式，数学环境输入，listing数字的样式  
+%extendedchars=false,columns=flexible,mathescape=true  
+%numbersep=-1em  
+}  
+\title{MySql笔记}
+\author{徐国盛}
+\begin{document}
+\maketitle
+\tableofcontents
+\section{数据和表}
+1.CEATE DATABASE 创建数据库
+
+如：CREATE DATABASE my$\_$contacts
+
+2.USE DATABASE(name) 进入相应的数据库
+
+如：USE DATABASE my$\_$contacts
+
+3.CREATE TABLE (table name) (column1, column2,\dots)  创建表
+
+如：CREATE TABLE my$\_$contacts (
+
+			last$\_$name VARCHAR(30) NOT NULL,
+
+			firs$\_$name VARCHAR(20) NOT NULL,
+
+			birthday DATA NOT NULL,
+
+			\dots
+
+			);
+
+CREATE TABLE doughnut$\_$list (
+
+			 doughnut$\_$name VARCHAR(20) NOT NULL,
+ 
+			 doughnut$\_$type VARCHAR(6) NOT NULL,
+
+			 doughnut$\_$cost DEC(3,2) NOT NULL DEFAULT 1.00
+
+ );
+
+4.INSERT INTO tablename (column1, column2, \dots) VALUES(data1, data2, \dots) 插入数据
+
+5.DROP TABLE tablename 删除表
+
+要点：
+
+1.如果想查看表的结构，可以使用DESC。
+
+2.DROP TABLE 语句用于丢弃表，慎重使用！
+
+3.为表插入数据时，可以使用任何一种INSERT语句。
+
+4.NULL是未定义的值。它不等于零，也不等于空值。值可以是NULL，但觉非等于NULL。
+
+5.没有在INSERT语句中赋值的列默认为NULL。
+
+6.可以把列修改为不接受NULL值，这需要创建表时使用关键字NOT NULL。
+
+7.创建表时使用DEFAULT，可于日后输入缺乏部分数据的记录时自动填入默认值。
+\section{SELECT语句}
+1.SELECT * FROM tablename 选出此表中所有的行列。
+
+如:SELECT * FROM my\_contacts
+
+2.MySql中，'用\textbackslash'或’’表示。
+3.SELECT column1 column2 \dots FROM tablename WHERE (the conditions)
+	
+如:SELECT drink\_name FROM easy\_drinks WHERE second = 'lemonade'。其中可以有$>$,$<$,$=$和$<>$等运算符号。
+
+4.SELECT column FROM tablename WHERE condition1  AND condition2;
+
+如:SELECT drink\_name FROM easy\_drinks WHERE main = 'soda' AND amount1 = 1.5;其中可以运用OR等关系关键字。	
+	
+SELECT drink\_name FROM easy\_drinks WHERE	cost >= 3.5 AND calories < 50;
+
+SELECT drink\_name FROM drink\_info WHERE drink\_name >= 'L' AND drink\_name < 'M'; 选出名字手字母为L的的饮料。	
+
+5.找到NULL的列
+
+1>直接找到NULL
+
+SELECT drink\_name FROM drink\_info WHERE calories IS NULL;
+
+2>间接找的NULL
+
+SELECT calories FROM drink\_info WHERE drink\_name = 'Dragon Breath'; 在这里，名为‘Dragon Breath’的饮料calories为NULL。通过确定其他列来寻找calories值为NULL的行
+
+6.通配符
+
+SELECT * FROM my\_contacts WHERE location LIKE '$\%$CA';其中，\%是一个通配符，可以等于字符串中的任何字符。在这里是找出以地址CA结尾的行。
+
+SELECT first\_name FROM mu\_contacts WHERE first\_name LIKE '\_IM';下划线\_只是一个字符的替身。
+
+7.确定一个范围。
+
+1>用AND和比较运算符确定一个范围。
+
+SELECT drink\_name FROM drink\_info WHERE calories >= 30 AND calories <= 60;
+
+2>用BETWEEN确定一个范围。
+
+SELECT drink\_name FROM drink\_info WHERE calories BETWEEN 30 AND 60;
+
+8. IN和NOT IN
+
+1>SELECT date\_name FROM black\_book WHERE rating IN ('innovative', 'fabulous', 'delightful', 'pretty good');
+
+2>SELECT date\_name FROM black\_book WHERE rating NOT IN ('innovative', 'fabulous', 'delightful', 'pretty good');
+
+\textbf{注意}:NOT 可以和BETWEEN或LIKE一起使用。\textbf{NOT 一定要紧跟在WHERE后面，当NOT和AND或OR一起使用时，要直接接在AND或OR后面。}如下：
+
+SELECT drink\_name FROM drink\_info WHERE NOT carbs BETWEEN 3 AND 5;
+
+SELECT date\_name FROM black\_book WHERE NOT date\_name LIKE 'A\%' AND NOT date\_name LIKE 'B\%';
+
+但是会有以下之中特殊情况：
+
+1> NOT IN
+
+SELECT * FROM easy\_drinks WHERE NOT main IN ('soda', 'iced tea');
+
+SELECT * FROM easy\_drinks WHERE main NOT IN ('soda', 'iced tea'); 效果是一样的。
+
+2> NULL 取得列中所有不是NULL的值
+
+SELECT * FROM easy\_drinks WHERE NOT main IS NULL;
+
+SELECT * FROM easy\_drinks WHERE mian IS NOT NULL; 效果是一样的。
+\section{DELETE和UPDATE}
+DELETE FROM clown\_info WHERE activities = 'dancing'; 删除where判断确定的列
+
+\textbf{DELETE同样可以和关系运算符AND，0R，$<>$计算，但要谨慎使用。一般情况下先通过SELECT语句选出要删除的行，进行确定，然后在通过DELETE语句删除。}
+
+UPDATE doughnut\_ratings SET type = 'glazed' WHERE type = 'plain glazed';
+
+UPDATE doughnut\_ratings SET cost = cost + 1 WHERE cost = 3;
+
+UPDATE语句时更新WHERE语句确定的行的其中的列值，使用时是十分安全的；在某些情况下，UPDATE = SELECT + DELETE。同时，在SET项中，可以进行相关的数值运算和字符运算。
+\section{聪明的表设计}
+
+ATOMIC DATA 数据原子性。列中的数据若以拆解成查询所需的最小单位，就具有原子性。
+
+ATOMIC DATA 规则一：
+
+具有原子性表示在同一列中不会存储多个类型相同的数据。
+
+ATOMIC DATA 规则二：
+
+具有原子性表示不会用多个列来存储类型相同的数据。
+
+FIRST NORMAL FORM(1NR) 第一范式。每个数据行均包含原子性数据值。而且每个数据行均需具有唯一的识别方法。
+
+1> SHOW CREATE TABLE 使用这个命令来呈现创建现有表的正确语法。如：
+\begin{lstlisting}[language = SQL]
+SHOW CREATE TABLE my\_mycontacts
+\end{lstlisting}
+
+2> PRIMARY KEY （）设置主键。一个或一组能识别出唯一数据行的列。
+
+3> AUTO\_INCREMENT 在列的声明中使用这个关键字，每次执行INSERT命令来插入数据时，它都会自动给列赋予唯一的递增数据值。如：
+\begin{lstlisting}[language = SQL]
+CREATE TABLE persons (
+			id INT NOT NULL AUTO\_INCREMENT,
+			first\_name VARCHAR(30) NOT NULL,
+			last\_name VARCHAR(30) NOT NULL,
+			PRIMARY KEY (id) );
+\end{lstlisting}
+3> ALTER 语句。如：
+\begin{lstlisting}[language = SQL]
+ALTER TABLE my\_contacts 
+ADD COLUMN contact\_id INT NOT NULL AUTO\_INCREMENT FIRST,
+ADD PRIMARY KEY (contact\_id);
+\end{lstlisting}
+\section{ALTER}
+\section{SELECT进阶}
+\section{多张表的数据库设计}
+\section{连接与多张表的操作}
+\section{子查询}
+\section{外联接、自联接与联合}
+\section{约束、视图与事务}
+\section{安全性}
+\section{附录1}
+\section{附录2}
+\section{附录3}
+\end{document}

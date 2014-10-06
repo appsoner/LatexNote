@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\newcommand{\ud}{\,\mathrm{d}}
+\title{Homework of Stochastic Process}
+\author{GuoSheng Xu\\130509030005}
+\begin{document}
+\maketitle
+Firstly, we define the history ~$H(t)$~ of the event process at time ~$t$~ as
+$$H(t) = \{N(s):0 \leq s <t\}$$
+and let ~$\Delta N(t) = N(t+\Delta t^-)-N(t^-)$~ denote the number of events in ~$[t,t+\Delta t)$~. The value ~$N(0)$~is included in ~$H(t)$~; this is typically equal to ~$0$~, but there are situations where it may take on positive values as well. In such cases ~$N(t)$~ may be defined as either the number of events in ~$(0,t]$~or ~$[0,t]$~.	
+		
+		It is assumed in the continuous time case that two events cannot occur simultaneously, and the \textbf{intensity function} for the event process is
+$$\lambda(t|H(t))=\lim_{\Delta t\rightarrow 0}\frac{Pr\{\Delta N(t) = 1|H(t)\}}{\Delta t}$$
+		
+secondly, a Possion process is one for which the intensity is of the form
+\begin{equation}\label{eq1.1}
+\lambda(t|H(r=t)) =\rho(t) \qquad t>0
+\end{equation}
+where ~$\rho (t)$~ is a nonnegative integrable function. It is also assumed that the cumulative intensity
+$$\mu(t) = \int_0^t\rho(u) \ud u \qquad t>0$$
+is continuous and finite for all~$t>0$~, and the ~$\rho$~ can be constant.
+		
+The Poisson process is seen from the definition (~\ref{eq1.1}) to be a Markov process; the probability of an event in ~$(t,t+\Delta t)$~ may depend on ~$t$~ but is depended on of ~$H(t)$~.
+		
+The following properties is what we want to proof:
+
+(i) ~$N(s,t)$~ has a Poisson distribution with mean ~$\mu(s,t)=\mu(t)-\mu(s)$~
+, for ~$0\leq s <t$~.
+
+(ii) if~$(s_1,t_1]$~and~$(s_2,t_2]$~ are nonoverlapping intervals then ~$N(s_1,t_1)$~and~\\
+		~$N(s_2,t_2)$~are independent random variables.
+
+\text{Proof}
+
+i) The probability density for the outcome ``n events occur, at times ~$t_1<\dots<t_n$~in~$(s,t]$~''.
+$$\left\{\prod_{j=1}^{n}\rho(t_j)\right\}exp\{-\mu(s,t)\}$$
+the marginal probability of ~$n$~ events is then 
+\begin{equation}\label{eq1.2}
+\begin{aligned}
+Pr(n \text{events in} (s,t])&=\\
+							&\left\{\int\dots\int\left[\prod_{j=1}^{n}\rho(t_j)\right]\ud t_1\dots\ud t_n\right\}\text{exp}\{\mu(s,t)\}
+\end{aligned}
+\end{equation}
+where the multiple integral is over the regions ~$s <t_1<\dots<t_n\leq t$~.
+Because the integrand ~$\prod\rho(t_j)$~ is symmetric in ~$t_1,\dots,t_n$~it follows that the integral in (\ref{eq1.2}) is
+\begin{equation*}
+\begin{aligned}
+(n!)^{-1}\int_{s}^t\dots\int{s}^t\prod_{j=1}^n\rho(t_j)\ud t_1\dots\ud t_n &=
+(n!)^{-1}\prod_{j=1}^{n}\left\{\int_s^t\rho(t_j)\ud t_j\right\}\\
+					&=(n!)^{-1}\mu(s,t)^n
+\end{aligned}
+\end{equation*}
+Thus by (\ref{eq1.2})
+\begin{equation}\label{eq1.3}
+Pr(n \text{events in}(s,t]) = \frac{\mu(s,t)^n}{n!}\text{exp}\{-\mu(s,t)\}
+	\qquad n=0,1,\dots
+\end{equation}
+which is the Possion probability mass function as stated in (i).
+
+(ii) above easily follows by nothing that ~$t_1<s_2$~ and using the fact that the random variable ~$N(s_2, t_2)$~ is independent of the history ~$H(s_2)$~ of events prior to ~$s_2$~. It is therefore independent of ~$N(s_1, t_1)$~. The counting process ~$\{N(t), 0 \leq t\}$~ has the \textit{mean functio)}~$\mu(t)$~:
+$$E\{N(t)\} = \mu(t)$$
+The rate \textit{rate function}(also called the rate of occurrence function)
+for a process is defined as ~$\rho(t)=\mu'(t)$~，where ~$\mu'(t)=d\mu(t)/dt$~. It follows that
+$$E(\Delta N(t))=\rho(t)\Delta t + o(\Delta t)$$
+where ~$\Delta N(t)$~represents the number of events in the short interval~$
+[t, t+\Delta t)$~. Thus for a Possion process, the rate function equals the 
+intensity function. This property, which does not hold for other process, reflects the fact that ~$\Delta N(t)$~ is independent of ~$H(t)$~.
+
+The conditional distributions of gap times ~$W_j=T_j-T_{j-1}$~are given as
+$$Pr(W_j>w|T_{j-1}=t_{j-1}) = exp\{-\mu(t_{j-1}, t_{j-1}+w)\}\quad j= 1,2,\dots$$
+and so the gap times are not in general statistically independent. However, in the important special case of the \textit{homogeneous Poisson process}, where ~$\rho(t)=\rho$~, they are independent.
+
+\textbf{Reference}
+
+1) The Statistical Analysis of Recurrent Event
+\end{document}

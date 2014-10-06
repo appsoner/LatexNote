@@ -1,0 +1,270 @@
+\documentclass[UTF8]{ctexart}
+%\usepackage{CJKutf8}
+\setCJKmainfont{KaiTi}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{%  
+alsolanguage=Java,  
+%language={[ISO]C++},       %language为，还有{[Visual]C++}  
+%alsolanguage=[ANSI]C,      %可以添加很多个alsolanguage,如alsolanguage=matlab,alsolanguage=VHDL等  
+%alsolanguage= tcl,  
+alsolanguage= XML,  
+tabsize=4, %  
+frame=shadowbox, %把代码用带有阴影的框圈起来  
+commentstyle=\color{red!60!blue!90},%浅灰色的注释  
+rulesepcolor=\color{red!20!green!20!blue!20},%代码块边框为淡青色  
+keywordstyle=\color{blue!90}\bfseries, %代码关键字的颜色为蓝色，粗体  
+showstringspaces=false,%不显示代码字符串中间的空格标记  
+stringstyle=\ttfamily, % 代码字符串的特殊格式  
+keepspaces=true, %  
+breakindent=22pt, %  
+numbers=left,%左侧显示行号 往左靠,还可以为right，或none，即不加行号  
+stepnumber=1,%若设置为2，则显示行号为1,3,5，即stepnumber为公差,默认stepnumber=1  
+%numberstyle=\tiny, %行号字体用小号  
+numberstyle={\color[RGB]{0,192,192}\tiny} ,%设置行号的大小，大小有tiny,scriptsize,footnotesize,small,normalsize,large等  
+numbersep=8pt,  %设置行号与代码的距离，默认是5pt  
+basicstyle=\footnotesize, % 这句设置代码的大小  
+showspaces=false, %  
+flexiblecolumns=true, %  
+breaklines=true, %对过长的代码自动换行  
+breakautoindent=true,%  
+breakindent=4em, %  
+%escapebegin=\begin{CJK*}{GBK}{hei},escapeend=\end{CJK*},  
+aboveskip=1em, %代码块边框  
+tabsize=2,  
+showstringspaces=false, %不显示字符串中的空格  
+backgroundcolor=\color[RGB]{245,245,244},   %代码背景色  
+%backgroundcolor=\color[rgb]{0.91,0.91,0.91}    %添加背景色  
+escapeinside=``,  %在``里显示中文  
+%% added by http://bbs.ctex.org/viewthread.php?tid=53451  
+fontadjust,  
+captionpos=t,  
+framextopmargin=2pt,framexbottommargin=2pt,abovecaptionskip=-3pt,belowcaptionskip=3pt,  
+xleftmargin=4em,xrightmargin=4em, % 设定listing左右的空白  
+texcl=true,% 设定中文冲突，断行，列模式，数学环境输入，listing数字的样式  
+%extendedchars=false,columns=flexible,mathescape=true  
+%numbersep=-1em  
+}  
+\title{Java Note}
+\author{徐国盛}
+\begin{document}
+%\begin{CJK}{UTF8}{gkai}
+\maketitle
+\tableofcontents
+\section{Java基础}
+\subsection{函数重载}
+函数名一样，参数列表不一样，重载. 参数顺序不同也为重载。与函数的返回值没有任何关系
+\begin{lstlisting}[language = Java]
+void show (int a, char b, double c){}
+a. void show(int x, char y, double z){} //because it is the same with original funciton
+b. int show(int a, double c, char b){} //overload, Here are different parameter types
+c. void show(int a, double c, char(b)){} //overload, it share the same reason as before
+d. boolean show(int c, char b){}// overload =, because the number of parameters is different.
+e. void show(double c){} //overload, the same reason as before.
+f. double show(int x, char y, double z) //unoverload, it's denied in the same class
+\end{lstlisting}
+\subsection{数组}
+\subsubsection{选择排序法和冒泡排序法}
+在最后将交换位置的操作封装为一个功能。
+%\input{../java/ArrayTest2.java}
+\lstinputlisting[language = Java]{../java/ArrayTest2.java}
+
+\subsubsection{数组的找key，折半查找}
+折半查找一个key，前提是一个有序等的array。附加功能：对于一个有序数组，将一个元素查到该array中，并继续保证该array是有序的。
+\lstinputlisting[language = Java]{../java/ArrayTest4.java}
+%\end{CJK}
+\subsubsection{进制转换}
+在以下程序中，应用$>>>$时无符号右移，不是$>>$, 不然程序会有error。$>>$是有符号右移。在负数前面补1，正数前面补0。（这会导致成数组角标越界，因为多了一位，$--pos$会变为负数）
+\lstinputlisting[language = Java]{../java/ArrayTest7.java}
+\subsubsection{二维数组}
+注意二维数组在内存中的存储
+\lstinputlisting[language = Java]{../java/Array2Demo.java}
+练习题
+\lstinputlisting[language = Java]{../java/Array2Test.java}
+\subsection{面向对象}
+
+\subsubsection{成员变量和局部变量}
+类类型变量指向对象
+
+属性和行为构成了类成员。属性对应着类变量，行为对应这类中的函数。
+
+1>作用范围
+
+成员便来那个作用于整个类中，局部变量作用于函数中，或者语句中。
+
+2>在内存中的位置
+
+成员变量：在堆内存中，以为对象的存在，才在内存中存在。
+
+局部变量：在栈内存中。
+
+更改对象属性 对象.对象成员。
+
+
+\subsubsection{匿名对象使用方式}
+
+1>当对象的方法只调用一次时，可以用匿名对象完成，这样写比较简化。但如果对一个对象进行多个成员调用，必须给这个对象起个名字。
+
+2>可以将匿名对象作为实际参数进行传递。但创建的对象不是垃圾。
+
+\subsubsection{封装概述}
+\textbf{封装}:对象的属性和实现细节，仅对外提供公共访问方式。
+\textbf{封装原则}
+
+\textbullet 将不需要对外提供的内容都隐藏起来。
+
+\textbullet 把属性都隐藏，提供公共方法对其访问。
+\lstinputlisting[language = Java]{../java/PersonDemo.java}
+\subsubsection{构造函数}
+\textbf{什么时候定义构造函数呢？}
+
+当分析该事物时，该事物具备一些特性或者行为，那么将这些内容定义于构造函数中
+
+\textbf{构造函数特点:}
+
+\textbullet 函数名与类名相同
+
+\textbullet 不定义返回值类型
+
+\textbullet 不可以写return语句
+
+\textbf{构造函数对象一建立就会调用与之对应的构造函数}
+
+\textbf{构造函数的作用}：可以用于给对象进行初始化。若所有自定义构造函数被\textbf{private}关键字修饰，进行了私有化，那么对象将不能被创建。
+
+\textbf{构造函数的小细节}：当一个类中没有定义构造函数时，那么系统会默认给该类加入一个空参数的构造函数。
+
+当在类中自定义了构造函数后，系统就不再建立构造函数。
+\lstinputlisting[language = Java]{../java/PersonDemo2.java}
+\subsubsection{构造代码块}
+\textbf{构造代码快作用}:给对象进行初始化。对象一建立就运行,而且优于构造函数运行。
+
+\textbf{构造代码块与构造函数的区别}
+
+\textbullet 构造代码块是给所有对象统一进行初始化。
+
+\textbullet 构造函数是给对应对象进行初始化。
+
+\textbf{将不同对象的共性初始化内容定义在构造代码块中}
+\subsubsection{this关键字}
+\textbf{this}关键字是用于区别局部变量和成员变量相同的情况。
+
+\textbf{this}为什么能够解决局部变量与成员变量相同的问题？
+
+\textbf{this}代表的是本类对象，到底代表哪一个。
+\textbf{this}代表所在函数所属对象的引用。
+简单说哪个对象在调用\textbf{this}所在的函数，\textbf{this}就代表哪个对象。
+
+\textbf{this的应用}:当定义类中功能时，该函数内部要调用到该函数的对象时，这时运用\textbf{this}来表示这个对象。但凡本类功能内部使用到了本类对象，都用\textbf{this}。
+
+\lstinputlisting[language = Java]{../java/PersonDemo3.java}
+
+\textbf{this 与构造函数间的调用}
+
+\textbf{this}语句：用于构造函数之间进行互相调用。
+
+\textbf{this}语句只能定义在构造函数的第一行。因为初始化要先执行。
+要注意防止死循环调用的发生。
+\lstinputlisting[language = Java]{../java/PersonDemo4.java}
+\subsubsection{static关键字}
+\textbf{静态}：\textbf{static}
+\textbf{用法}：是一个修饰符，用于修饰成员（成员变量，成员函数）。
+
+当成源被静态修饰后，就多了一种调用方式，除了可以被对象调用外，还可以直接被
+类名调用。格式是：\text{类名.静态成员}
+
+\textbf{静态的特点}
+
+1.随着类的加载而加载。也就是说，静态会随着类的消失而消失。说明它的生命周期最长。
+
+2.优先于对象存在。明确一点：静态是优先存在的。对象是后存在的。
+
+3.被所有的对象所共享。
+
+4.可以直接被类名所调用。
+
+\textbf{实例变量与类变量的区别}
+
+1.存放位置
+	
+	类变量随着类的加载存在于方法区中。
+
+	实例变量随着对象的建立而存在于堆内存中。
+
+2.生命周期
+	
+	类变量声明周期最长，随着类的消失而消失。
+
+	实例变量的生命周期，随着对象的消失而消失。
+
+\textbf{静态的使用注意事项}
+
+1.静态方法只能访问静态成员。非静态方法既可以访问静态也可以访问非静态。
+
+2.静态方法中不可以定义\textbf{this},\textbf{super}关键字。
+	
+	因为静态优先于对象存在。所以静态方法中不可以出现\textbf{this}字样。
+
+3.主函数是静态的。
+
+\textbf{静态有利有弊}：
+
+利处：对对象的共享数据进行单独空间的存储，节省空间的内存，没有必要每一个对象中都存储一份。
+
+弊端：生命周期过长。
+
+	  访问出现局限性。（静态虽好，只能访问静态。）
+
+
+
+\lstinputlisting[language = Java]{../java/StaticDemo.java}
+\subsubsection{main函数}
+主函数是一个特殊的函数，作为程序的入口，可以被jvm调用。
+
+主函数的定义：
+
+\textit{public}：代表这该函数的访问权限是最大的。
+
+\textit{static}：代表这主函数随着类的加载就已经存在了。
+
+\textit{void}：主函数没有具体的返回值。
+
+\textit{main}：不是关键字，但是一个特殊的单词，可以被jvm识别。
+
+(String[] args):函数的参数，参数类型是一个数组，该数组中的元素是字符串。也可以称作字符串类型的数组。
+
+主函数的固定格式：jvm识别。
+jvm在调用主函数时，传入的是new String[0];
+\lstinputlisting[language = Java]{../java/MainDemo.java}
+\subsubsection{静态的使用}
+什么时候使用静态？
+
+要从两方面下手：
+
+因为静态修饰的内容有成员变量和函数。
+
+什么时候定义静态变量（类变量）呢？
+
+当对象中出现共享数据时，该数据被静态所修饰。
+对象中的特有数据要定义成非静态寻在于堆内存中。
+
+什么时候定义静态函数呢？
+
+当功能内部没有访问到非静态数据(对象的特有数据)，那么该功能可以定义成静态的。
+
+\textbf{一个静态应用的例子}
+\lstinputlisting[language = Java]{../java/ArrayTool.java}
+\lstinputlisting[language = Java]{../java/ArrayToolDemo.java}
+
+设置class文件按路径
+
+\textit{set classpath=.;c:\myclass}
+\subsubsection{生成说明文档}
+
+\textit{javadoc -d ~/Document/java -author -version ArrayTool.java}
+\end{document}
+
+
+

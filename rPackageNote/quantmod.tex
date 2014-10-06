@@ -1,0 +1,333 @@
+\section{quantmod}
+\subsection{获得数据}
+\subsubsection{getSymbols}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{opts_chunk}\hlopt{$}\hlkwd{set}\hlstd{(}\hlkwc{fig.height} \hlstd{=} \hlnum{5}\hlstd{)}
+\hlkwd{library}\hlstd{(quantmod)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+设定环境，环境是一个个对象的容器，创建一个新的环境是在当前工作环境中开辟一个新的环境空间，用来存储想单独存储的变量或对象等。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{new.environment} \hlkwb{<-} \hlkwd{new.env}\hlstd{()} \hlcom{#新建环境空间，存储对象}
+\hlkwd{getSymbols}\hlstd{(}\hlstr{"IBM"}\hlstd{,} \hlkwc{env} \hlstd{= new.environment,} \hlkwc{src} \hlstd{=} \hlstr{'yahoo'}\hlstd{,}
+           \hlkwc{from} \hlstd{=} \hlstr{"2013-10-01"}\hlstd{,} \hlkwc{to} \hlstd{=} \hlstr{"2013-10-23"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] "IBM"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{get}\hlstd{(}\hlstr{"IBM"}\hlstd{,} \hlkwc{env} \hlstd{= new.environment)}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+## 2013-10-01    185.3    186.7   184.7     186.4    2681200        182.2
+## 2013-10-02    185.5    186.3   184.4     185.0    3617100        180.8
+## 2013-10-03    184.7    185.0   183.0     183.9    3211800        179.8
+## 2013-10-04    184.2    185.1   183.6     184.1    2863600        180.0
+## 2013-10-07    181.8    183.3   181.8     182.0    3966400        178.0
+## 2013-10-08    181.9    182.0   178.7     178.7    5578300        174.7
+## 2013-10-09    179.4    181.7   179.1     181.3    4423500        177.3
+## 2013-10-10    183.2    184.8   182.4     184.8    3658900        180.7
+## 2013-10-11    185.2    186.2   184.1     186.2    3232600        182.0
+## 2013-10-14    185.4    187.0   184.4     187.0    2663100        182.8
+## 2013-10-15    185.7    185.9   184.2     184.7    3365100        180.6
+## 2013-10-16    185.4    186.7   185.0     186.7    6718000        182.6
+## 2013-10-17    173.8    177.0   172.6     174.8   22368900        170.9
+## 2013-10-18    174.8    175.0   173.2     173.8   10548000        169.9
+## 2013-10-21    174.4    174.8   172.6     172.9    7098700        169.0
+## 2013-10-22    173.3    175.6   172.9     175.0    6977300        171.1
+## 2013-10-23    175.1    176.0   174.4     175.8    5409400        171.9
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsubsection{setSymbolLookup}
+也可以通过~\textbf{setSymbolLookup}~进行设置
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{setSymbolLookup}\hlstd{(}\hlkwc{IBM} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{'IBM'}\hlstd{,} \hlkwc{src} \hlstd{=} \hlstr{'yahoo'}\hlstd{),}
+                \hlkwc{USDEUR} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{'USD/EUR'}\hlstd{,} \hlkwc{src} \hlstd{=} \hlstr{'oanda'}\hlstd{))}
+\hlkwd{getSymbols}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{'IBM'}\hlstd{,} \hlstr{'USDEUR'}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+## [1] "IBM"    "USDEUR"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{head}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+## 2007-01-03    97.18    98.40   96.26     97.27    9196800        84.57
+## 2007-01-04    97.25    98.79   96.88     98.31   10524500        85.48
+## 2007-01-05    97.60    97.95   96.91     97.42    7221300        84.70
+## 2007-01-08    98.50    99.50   98.35     98.90   10340000        85.99
+## 2007-01-09    99.08   100.33   99.07    100.07   11108200        87.01
+## 2007-01-10    98.50    99.05   97.93     98.89    8744800        85.98
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsubsection{getFX}
+获取汇率(从oanda上)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getFX}\hlstd{(}\hlstr{"HKD/USD"}\hlstd{,} \hlkwc{from} \hlstd{=} \hlstr{"2013-10-20"}\hlstd{,} \hlkwc{to} \hlstd{=} \hlstr{"2013-10-25"}\hlstd{,}
+      \hlkwc{env} \hlstd{= new.environment)}
+\end{alltt}
+\begin{verbatim}
+## [1] "HKDUSD"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{get}\hlstd{(}\hlstr{'HKDUSD'}\hlstd{,} \hlkwc{env} \hlstd{= new.environment)}
+\end{alltt}
+\begin{verbatim}
+##            HKD.USD
+## 2013-10-20   0.129
+## 2013-10-21   0.129
+## 2013-10-22   0.129
+## 2013-10-23   0.129
+## 2013-10-24   0.129
+## 2013-10-25   0.129
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsubsection{getFinancials}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getFinancials}\hlstd{(}\hlstr{"APPL"}\hlstd{)}
+\hlkwd{viewFinancials}\hlstd{(APPL.f)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\subsubsection{getDividends}
+\em{verbose = T}显示抓取的过程。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getDividends}\hlstd{(}\hlstr{"IBM"}\hlstd{,} \hlkwc{from} \hlstd{=} \hlstr{"2012-01-01"}\hlstd{,}
+             \hlkwc{to} \hlstd{=} \hlstr{"2013-10-25"}\hlstd{,} \hlkwc{verbose} \hlstd{= T)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\subsection{is，has族函数}
+\em{O}开盘价，\em{H}最高价，\em{L}最低价，\em{C}收盘价，\em{V}成交量
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{is.OHLC}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{is.OHLCV}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{is.BBO}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+## [1] FALSE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{is.TBBO}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+## [1] FALSE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{is.HLC}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{has.OHLC}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE TRUE TRUE TRUE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{has.OHLC}\hlstd{(IBM,} \hlkwc{which} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE TRUE TRUE TRUE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{has.OHLC}\hlstd{(IBM,} \hlkwc{which} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 1 2 3 4
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsection{列名函数数据}
+\subsubsection{OHLC,Op}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{OHLC}\hlstd{(IBM))}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close
+## 2007-01-03    97.18    98.40   96.26     97.27
+## 2007-01-04    97.25    98.79   96.88     98.31
+## 2007-01-05    97.60    97.95   96.91     97.42
+## 2007-01-08    98.50    99.50   98.35     98.90
+## 2007-01-09    99.08   100.33   99.07    100.07
+## 2007-01-10    98.50    99.05   97.93     98.89
+\end{verbatim}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{Op}\hlstd{(IBM))}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open
+## 2007-01-03    97.18
+## 2007-01-04    97.25
+## 2007-01-05    97.60
+## 2007-01-08    98.50
+## 2007-01-09    99.08
+## 2007-01-10    98.50
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsection{计算函数}
+\subsubsection{Delt}
+主要是用来计算一个序列的一个阶段到另一个阶段的变化率或者计算两个序列之间的变化率
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{Delt}\hlstd{(}\hlkwd{Op}\hlstd{(IBM),} \hlkwc{type} \hlstd{=} \hlstr{"arithmetic"}\hlstd{))} \hlcom{#lag 1期}
+\end{alltt}
+\begin{verbatim}
+##            Delt.1.arithmetic
+## 2007-01-03                NA
+## 2007-01-04         0.0007203
+## 2007-01-05         0.0035990
+## 2007-01-08         0.0092213
+## 2007-01-09         0.0058883
+## 2007-01-10        -0.0058539
+\end{verbatim}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{Delt}\hlstd{(}\hlkwd{Op}\hlstd{(IBM),} \hlkwc{type} \hlstd{= (}\hlstr{"log"}\hlstd{)))}
+\end{alltt}
+\begin{verbatim}
+##            Delt.1.log
+## 2007-01-03         NA
+## 2007-01-04  0.0007201
+## 2007-01-05  0.0035925
+## 2007-01-08  0.0091791
+## 2007-01-09  0.0058711
+## 2007-01-10 -0.0058711
+\end{verbatim}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{Delt}\hlstd{(}\hlkwd{Op}\hlstd{(IBM),} \hlkwd{Cl}\hlstd{(IBM)))}
+\end{alltt}
+\begin{verbatim}
+##            Delt.0.arithmetic
+## 2007-01-03         0.0009261
+## 2007-01-04         0.0108997
+## 2007-01-05        -0.0018443
+## 2007-01-08         0.0040609
+## 2007-01-09         0.0099919
+## 2007-01-10         0.0039594
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsubsection{first,lasth函数}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{first}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+## 2007-01-03    97.18     98.4   96.26     97.27    9196800        84.57
+\end{verbatim}
+\begin{alltt}
+\hlkwd{last}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+## 2014-08-29    192.3    192.8   191.1     192.3    2909400        192.3
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsubsection{Next函数}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(IBM)}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+## 2007-01-03    97.18    98.40   96.26     97.27    9196800        84.57
+## 2007-01-04    97.25    98.79   96.88     98.31   10524500        85.48
+## 2007-01-05    97.60    97.95   96.91     97.42    7221300        84.70
+## 2007-01-08    98.50    99.50   98.35     98.90   10340000        85.99
+## 2007-01-09    99.08   100.33   99.07    100.07   11108200        87.01
+## 2007-01-10    98.50    99.05   97.93     98.89    8744800        85.98
+\end{verbatim}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{Next}\hlstd{(IBM,}\hlnum{1}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##             Next
+## 2007-01-03 97.25
+## 2007-01-04 97.60
+## 2007-01-05 98.50
+## 2007-01-08 99.08
+## 2007-01-09 98.50
+## 2007-01-10 99.00
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsubsection{to.weekly和to.monthly函数}
+开盘价为一周第一天的开盘价，收盘价为一周最后一天周五的收盘价。最高价为一周中的最高价，最低价为一周中的最低价。成交量为一周总的成交量。
+汇总月的类比。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{to.weekly}\hlstd{(IBM))}
+\end{alltt}
+\begin{verbatim}
+##            IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+## 2007-01-05    97.18    98.79   96.26     97.42   26942600        84.70
+## 2007-01-12    98.50   100.33   97.93     99.34   44830200        86.37
+## 2007-01-19    99.40   100.90   94.55     96.17   58474800        83.62
+## 2007-01-26    96.42    97.92   96.12     97.45   41549100        84.73
+## 2007-02-02    97.70    99.73   97.45     99.17   34172300        86.22
+## 2007-02-09    99.17   100.44   97.81     98.55   34668400        85.94
+\end{verbatim}
+\begin{alltt}
+\hlkwd{head}\hlstd{(}\hlkwd{to.monthly}\hlstd{(IBM))}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: timezone of object (UTC) is different than current timezone ().}}\begin{verbatim}
+##           IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+##  1月 2007    97.18   100.90   94.55     99.15  192702000        86.21
+##  2月 2007    98.97   100.44   92.47     92.94  125776200        81.05
+##  3月 2007    90.25    95.81   88.77     94.26  163194500        82.20
+##  4月 2007    94.51   103.00   93.91    102.21  166807200        89.13
+##  5月 2007   102.06   108.05  101.35    106.60  146441400        93.32
+##  6月 2007   106.62   107.24  101.56    105.25  169602000        92.14
+\end{verbatim}
+\end{kframe}
+\end{knitrout}

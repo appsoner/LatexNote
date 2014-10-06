@@ -1,0 +1,1291 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\title{Data Mining with case}
+\author{Guosheng}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Predict Stock Market Returns}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{opts_chunk}\hlopt{$}\hlkwd{set}\hlstd{(}\hlkwc{fig.height} \hlstd{=} \hlnum{5}\hlstd{)}
+\hlkwd{library}\hlstd{(DMwR)}
+\hlkwd{library}\hlstd{(quantmod)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\subsection{getting data}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{setSymbolLookup}\hlstd{(}\hlkwc{IBM} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{'IBM'}\hlstd{,} \hlkwc{src} \hlstd{=} \hlstr{'yahoo'}\hlstd{),}
+                \hlkwc{USDEUR} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{'USD/EUR'}\hlstd{,} \hlkwc{src} \hlstd{=} \hlstr{'oanda'}\hlstd{),}
+                \hlkwc{APPL} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{'APPL'}\hlstd{,} \hlkwc{src} \hlstd{=} \hlstr{''}\hlstd{))}
+\hlkwd{getSymbols}\hlstd{(}\hlstr{"IBM"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] "IBM"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{getSymbols}\hlstd{(}\hlstr{"^GSPC"}\hlstd{,}\hlkwc{from} \hlstd{=} \hlstr{"1970-01-01"}\hlstd{,} \hlkwc{to} \hlstd{=} \hlstr{"2009-09-15"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] "GSPC"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{colnames}\hlstd{(GSPC)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Open"}\hlstd{,} \hlstr{"High"}\hlstd{,} \hlstr{"Low"}\hlstd{,} \hlstr{"Close"}\hlstd{,} \hlstr{"Volume"}\hlstd{,} \hlstr{"Adjusted"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+$$\overline{P}_i = \frac{C_i+H_i+L_i}{3}$$
+Let ~$V_i$~be the set of k percentage variations of today's close to the following ~$k$~days average prices(often called arithmetic returns):
+$$V_i = \left\{\frac{\overline{P}_{i+j}-C_i}{C_i}\right\}_{j=1}^k$$
+Our indicator variable is the total sum of the variations those absolute value is above our target
+margin ~$p\%$~:
+$$T_i = \sum_v\{v\in V_i:v>p\%\cup v<-p\%\}$$
+The idea of the variable ~$T$~is to signal k-days period that have several days with average daily prices above target variation.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{T.ind} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{quotes}\hlstd{,} \hlkwc{tgt.margin} \hlstd{=} \hlnum{0.025}\hlstd{,} \hlkwc{n.days} \hlstd{=} \hlnum{10}\hlstd{)\{}
+  \hlstd{v} \hlkwb{<-} \hlkwd{apply}\hlstd{(}\hlkwd{HLC}\hlstd{(quotes),} \hlnum{1}\hlstd{, mean)}
+  \hlstd{r} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{NA}\hlstd{,} \hlkwc{ncol} \hlstd{= n.days,} \hlkwc{nrow} \hlstd{=} \hlkwd{NROW}\hlstd{(quotes))}
+  \hlkwa{for}\hlstd{(x} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{n.days) r[ ,x]} \hlkwb{<-} \hlkwd{Next}\hlstd{(}\hlkwd{Delt}\hlstd{(}\hlkwd{HLC}\hlstd{(quotes)[ ,}\hlnum{1}\hlstd{],v,} \hlkwc{k} \hlstd{= x), x)}
+  \hlstd{x} \hlkwb{<-} \hlkwd{apply}\hlstd{(r,} \hlnum{1}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{sum}\hlstd{(x[x} \hlopt{>} \hlstd{tgt.margin}\hlopt{|}\hlstd{x} \hlopt{< -}\hlstd{tgt.margin]))}
+  \hlkwa{if}\hlstd{(}\hlkwd{is.xts}\hlstd{(quotes))}
+    \hlkwd{xts}\hlstd{(x,} \hlkwd{time}\hlstd{(quotes))}
+  \hlkwa{else} \hlstd{x}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+We can have a better idea of this indicator:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{candleChart}\hlstd{(}\hlkwd{last}\hlstd{(GSPC,} \hlstr{"3 month"}\hlstd{),} \hlkwc{theme} \hlstd{=} \hlstr{"white"}\hlstd{,} \hlkwc{TA} \hlstd{=} \hlkwa{NULL}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/practice1} 
+\begin{kframe}\begin{alltt}
+\hlstd{avgPrice} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{p}\hlstd{)} \hlkwd{apply}\hlstd{(}\hlkwd{HLC}\hlstd{(p),} \hlnum{1}\hlstd{, mean)}
+\hlstd{addAvgPrice} \hlkwb{<-} \hlkwd{newTA}\hlstd{(}\hlkwc{FUN} \hlstd{= avgPrice,} \hlkwc{col} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{legend} \hlstd{=} \hlstr{"AvgPrice"}\hlstd{)}
+\hlstd{addT.ind} \hlkwb{<-} \hlkwd{newTA}\hlstd{(}\hlkwc{FUN} \hlstd{= T.ind,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{legend} \hlstd{=} \hlstr{"tgtRet"}\hlstd{)}
+\hlkwd{addAvgPrice}\hlstd{(}\hlkwc{on} \hlstd{=} \hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/practice2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{addT.ind}\hlstd{()}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/practice3} 
+
+\end{knitrout}
+some indicator
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+ \hlstd{myATR} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{ATR}\hlstd{(}\hlkwd{HLC}\hlstd{(x))[,} \hlstr{"atr"}\hlstd{]}
+ \hlstd{mySMI} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{SMI}\hlstd{(}\hlkwd{HLC}\hlstd{(x))[,} \hlstr{"SMI"}\hlstd{]}
+ \hlstd{myADX} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{ADX}\hlstd{(}\hlkwd{HLC}\hlstd{(x))[,} \hlstr{"ADX"}\hlstd{]}
+ \hlstd{myAroon} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{aroon}\hlstd{(x[,} \hlkwd{c}\hlstd{(}\hlstr{"High"}\hlstd{,} \hlstr{"Low"}\hlstd{)])}\hlopt{$}\hlstd{oscillator}
+ \hlstd{myBB} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{BBands}\hlstd{(}\hlkwd{HLC}\hlstd{(x))[,} \hlstr{"pctB"}\hlstd{]}
+ \hlstd{myChaikinVol} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{Delt}\hlstd{(}\hlkwd{chaikinVolatility}\hlstd{(x[,} \hlkwd{c}\hlstd{(}\hlstr{"High"}\hlstd{,}
+ \hlstr{"Low"}\hlstd{)]))[,} \hlnum{1}\hlstd{]}
+ \hlstd{myCLV} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{EMA}\hlstd{(}\hlkwd{CLV}\hlstd{(}\hlkwd{HLC}\hlstd{(x)))[,} \hlnum{1}\hlstd{]}
+ \hlstd{myEMV} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{EMV}\hlstd{(x[,} \hlkwd{c}\hlstd{(}\hlstr{"High"}\hlstd{,} \hlstr{"Low"}\hlstd{)], x[,} \hlstr{"Volume"}\hlstd{])[,}
+ \hlnum{2}\hlstd{]}
+ \hlstd{myMACD} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{MACD}\hlstd{(}\hlkwd{Cl}\hlstd{(x))[,} \hlnum{2}\hlstd{]}
+ \hlstd{myMFI} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{MFI}\hlstd{(x[,} \hlkwd{c}\hlstd{(}\hlstr{"High"}\hlstd{,} \hlstr{"Low"}\hlstd{,} \hlstr{"Close"}\hlstd{)],}
+ \hlstd{x[,} \hlstr{"Volume"}\hlstd{])}
+ \hlstd{mySAR} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{SAR}\hlstd{(x[,} \hlkwd{c}\hlstd{(}\hlstr{"High"}\hlstd{,} \hlstr{"Close"}\hlstd{)])[,} \hlnum{1}\hlstd{]}
+ \hlstd{myVolat} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{volatility}\hlstd{(}\hlkwd{OHLC}\hlstd{(x),} \hlkwc{calc} \hlstd{=} \hlstr{"garman"}\hlstd{)[,}
+ \hlnum{1}\hlstd{]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+build a randomforest using the data available, we include the parameter
+\textit{importance = T} so that the randonforest estimate the variable importance.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+ \hlkwd{data}\hlstd{(GSPC)}
+ \hlkwd{library}\hlstd{(randomForest)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# randomForest 4.6-10\\\#\# Type rfNews() to see new features/changes/bug fixes.}}\begin{alltt}
+ \hlstd{data.model} \hlkwb{<-} \hlkwd{specifyModel}\hlstd{(}\hlkwd{T.ind}\hlstd{(GSPC)} \hlopt{~} \hlkwd{Delt}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC),} \hlkwc{k}\hlstd{=}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{)} \hlopt{+}
+ \hlkwd{myATR}\hlstd{(GSPC)} \hlopt{+} \hlkwd{mySMI}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myADX}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myAroon}\hlstd{(GSPC)} \hlopt{+}
+ \hlkwd{myBB}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myChaikinVol}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myCLV}\hlstd{(GSPC)} \hlopt{+}
+ \hlkwd{CMO}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC))} \hlopt{+} \hlkwd{EMA}\hlstd{(}\hlkwd{Delt}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC)))} \hlopt{+} \hlkwd{myEMV}\hlstd{(GSPC)} \hlopt{+}
+ \hlkwd{myVolat}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myMACD}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myMFI}\hlstd{(GSPC)} \hlopt{+} \hlkwd{RSI}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC))} \hlopt{+}
+ \hlkwd{mySAR}\hlstd{(GSPC)} \hlopt{+} \hlkwd{runMean}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC))} \hlopt{+} \hlkwd{runSD}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC)))}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: NaNs produced}}\begin{alltt}
+ \hlkwd{set.seed}\hlstd{(}\hlnum{1234}\hlstd{)}
+ \hlstd{rf} \hlkwb{<-} \hlkwd{buildModel}\hlstd{(data.model,}\hlkwc{method}\hlstd{=}\hlstr{'randomForest'}\hlstd{,}
+ \hlkwc{training.per}\hlstd{=}\hlkwd{c}\hlstd{(}\hlkwd{start}\hlstd{(GSPC),}\hlkwd{index}\hlstd{(GSPC[}\hlstr{"1999-12-31"}\hlstd{])),}
+ \hlkwc{ntree}\hlstd{=}\hlnum{50}\hlstd{,} \hlkwc{importance}\hlstd{=T)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+obtain the data using \textbf{modelData}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ex.model} \hlkwb{<-} \hlkwd{specifyModel}\hlstd{(}\hlkwd{T.ind}\hlstd{(IBM)} \hlopt{~} \hlkwd{Delt}\hlstd{(}\hlkwd{Cl}\hlstd{(IBM),} \hlkwc{k}\hlstd{=} \hlnum{1}\hlopt{:}\hlnum{3}\hlstd{))}
+\hlstd{data} \hlkwb{<-} \hlkwd{modelData}\hlstd{(ex.model,} \hlkwc{data.window} \hlstd{= (}\hlkwd{c}\hlstd{(}\hlstr{"2009-01-01"}\hlstd{,} \hlstr{"2009-08-10"}\hlstd{)))}
+\hlcom{#m <- myFavouriteModellingTool(ex.model@model.formula,}
+\hlcom{#as.data.frame(data))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+check the importance of the variable as follows:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{varImpPlot}\hlstd{(rf}\hlopt{@}\hlkwc{fitted.model}\hlstd{,} \hlkwc{type} \hlstd{=} \hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/check_improtance} 
+
+\end{knitrout}
+we will use the value of 10 as tht threshold:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{imp} \hlkwb{<-} \hlkwd{importance}\hlstd{(rf}\hlopt{@}\hlkwc{fitted.model}\hlstd{,} \hlkwc{type} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlkwd{rownames}\hlstd{(imp)[}\hlkwd{which}\hlstd{(imp} \hlopt{>} \hlnum{10}\hlstd{)]}
+\end{alltt}
+\begin{verbatim}
+## [1] "Delt.Cl.GSPC.k.1.10.Delt.1.arithmetic"
+## [2] "myATR.GSPC"                           
+## [3] "myADX.GSPC"                           
+## [4] "myAroon.GSPC"                         
+## [5] "myCLV.GSPC"                           
+## [6] "myEMV.GSPC"                           
+## [7] "myVolat.GSPC"                         
+## [8] "myMACD.GSPC"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+use the above information we can obtain our finial data set as follows:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{data.model} \hlkwb{<-} \hlkwd{specifyModel}\hlstd{(}\hlkwd{T.ind}\hlstd{(GSPC)} \hlopt{~} \hlkwd{Delt}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC),} \hlkwc{k} \hlstd{=} \hlnum{1}\hlstd{)} \hlopt{+}
+                             \hlkwd{myATR}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myADX}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myEMV}\hlstd{(GSPC)}
+                           \hlopt{+} \hlkwd{myVolat}\hlstd{(GSPC)} \hlopt{+} \hlkwd{myMACD}\hlstd{(GSPC)} \hlopt{+} \hlkwd{mySAR}\hlstd{(GSPC)}
+                           \hlopt{+} \hlkwd{runMean}\hlstd{(}\hlkwd{Cl}\hlstd{(GSPC)))}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: NaNs produced}}\end{kframe}
+\end{knitrout}
+The following code creats all the data structures that we will use in subsquent sections for obtaining predictive models.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Tdata.train} \hlkwb{<-} \hlkwd{as.data.frame}\hlstd{(}\hlkwd{modelData}\hlstd{(data.model,} \hlkwc{data.window} \hlstd{=}
+                                         \hlkwd{c}\hlstd{(}\hlstr{'1970-01-01'}\hlstd{,}\hlstr{'1999-12-31'}\hlstd{)))}
+\hlstd{Tdata.eval} \hlkwb{<-} \hlkwd{na.omit}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(}\hlkwd{modelData}\hlstd{(data.model,}
+                                               \hlkwd{c}\hlstd{(}\hlstr{'2000-01-01'}\hlstd{,}
+                                                 \hlstr{'2009-09-15'}\hlstd{))))}
+\hlstd{Tform} \hlkwb{<-} \hlkwd{as.formula}\hlstd{(}\hlstr{'T.ind.GSPC ~ .'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\subsection{Artificial Netural Networks}
+ANNs are know to be sensitive to different scales of the variables used in a prediction problem. It makes sense to transform the data before giving them to the network. In our case we will normalize the data with the goal of making all variable have a mean of zero and a standard deviation of one. This can be easily accomplished by the following transformation applied to each column of our data set:
+$$y_i = \frac{x_i - \overline{x}}{\sigma_x}$$
+Below you can find a very simple illustration of how to use this type of ANN in R(Feed-forward ANNs with one hiden layer can be easily obtained using a function of the package \textit{nnet} in R):
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1234}\hlstd{)}
+\hlkwd{library}\hlstd{(nnet)}
+\hlstd{norm.data} \hlkwb{<-} \hlkwd{scale}\hlstd{(Tdata.train)}
+\hlstd{nn} \hlkwb{<-} \hlkwd{nnet}\hlstd{(Tform, norm.data[}\hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{, ],} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{decay} \hlstd{=} \hlnum{0.01}\hlstd{,}
+           \hlkwc{maxit} \hlstd{=} \hlnum{1000}\hlstd{,} \hlkwc{linout} \hlstd{= T,} \hlkwc{trace} \hlstd{= F)}
+\hlstd{norm.preds} \hlkwb{<-} \hlkwd{predict}\hlstd{(nn, norm.data[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{, ])}
+\hlstd{preds} \hlkwb{<-} \hlkwd{unscale}\hlstd{(norm.preds, norm.data)}
+\hlstd{sigs.nn} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(preds,} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlstd{true.sigs} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(Tdata.train[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{,} \hlstr{"T.ind.GSPC"}\hlstd{],}
+                             \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlkwd{sigs.PR}\hlstd{(sigs.nn, true.sigs)}
+\end{alltt}
+\begin{verbatim}
+##     precision recall
+## s      0.3735 0.3368
+## b      0.2157 0.2418
+## s+b    0.3287 0.3138
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+ANNs can be used for classification tasks:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1234}\hlstd{)}
+\hlstd{signals}  \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(Tdata.train[ ,} \hlstr{"T.ind.GSPC"}\hlstd{],} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlstd{norm.data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{signals} \hlstd{= signals,} \hlkwd{scale}\hlstd{(Tdata.train[ ,} \hlopt{-}\hlnum{1}\hlstd{]))}
+
+\hlstd{nn} \hlkwb{<-} \hlkwd{nnet}\hlstd{(signals} \hlopt{~} \hlstd{., norm.data[}\hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{, ],} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{decay} \hlstd{=} \hlnum{0.01}\hlstd{,}
+           \hlkwc{maxit} \hlstd{=} \hlnum{1000}\hlstd{,} \hlkwc{trace} \hlstd{= F)}
+\hlstd{preds} \hlkwb{<-} \hlkwd{predict}\hlstd{(nn, norm.data[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{, ],} \hlkwc{type} \hlstd{=} \hlstr{"class"}\hlstd{)}
+\hlkwd{sigs.PR}\hlstd{(preds, norm.data[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{,} \hlnum{1}\hlstd{])}
+\end{alltt}
+\begin{verbatim}
+##     precision recall
+## s      0.2883 0.2246
+## b      0.1825 0.2527
+## s+b    0.2471 0.2287
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsection{Support Vector Machines}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(e1071)}
+\hlstd{sv} \hlkwb{<-} \hlkwd{svm}\hlstd{(Tform, Tdata.train[}\hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{, ],} \hlkwc{gamma} \hlstd{=} \hlnum{0.001}\hlstd{,} \hlkwc{cost} \hlstd{=} \hlnum{100}\hlstd{)}
+\hlstd{s.preds} \hlkwb{<-} \hlkwd{predict}\hlstd{(sv, Tdata.train[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{, ])}
+\hlstd{sigs.svm} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(s.preds,} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlstd{true.sigs} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(Tdata.train[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{,} \hlstr{"T.ind.GSPC"}\hlstd{],}
+                             \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlkwd{sigs.PR}\hlstd{(sigs.svm, true.sigs)}
+\end{alltt}
+\begin{verbatim}
+##     precision recall
+## s      0.5102 0.1754
+## b         NaN 0.0000
+## s+b    0.5102 0.1330
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+we consider the classification task.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(kernlab)}
+\hlstd{data} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwc{signals} \hlstd{= signals, Tdata.train[ ,} \hlopt{-}\hlnum{1}\hlstd{])}
+\hlstd{ksv} \hlkwb{<-} \hlkwd{ksvm}\hlstd{(signals} \hlopt{~} \hlstd{., data[}\hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{, ],} \hlkwc{C} \hlstd{=} \hlnum{10}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+\end{verbatim}
+\begin{alltt}
+\hlstd{ks.preds} \hlkwb{<-} \hlkwd{predict}\hlstd{(ksv, data[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{])}
+\hlkwd{sigs.PR}\hlstd{(ks.preds, data[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{,} \hlnum{1}\hlstd{])}
+\end{alltt}
+\begin{verbatim}
+##     precision recall
+## s      0.3523 0.3474
+## b      0.3409 0.1648
+## s+b    0.3508 0.3032
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\subsection{Multivariate Adaptive Regression Splines}
+A MARS model has the following general form:
+$$mars(\mathbf{x}) = c_0 + \sum_{i=1}^kc_iB_i(\mathbf{x})$$
+where ~$c_i$s are constants and the ~$B_i$s are basis functions.
+The most common basis functions are so-called \textit{hinge} functions that have the form
+$$H[-(x_i - t)] = max(0, t - x_i) \quad H[+(x_i - t)] = max(0, x_i - t)$$
+where ~$x_i$~is a predictor and ~$t$~ a threshold value on this predictor.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(earth)}
+\hlstd{e} \hlkwb{<-} \hlkwd{earth}\hlstd{(Tform, Tdata.train[}\hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{, ])}
+\hlstd{e.preds} \hlkwb{<-} \hlkwd{predict}\hlstd{(e, Tdata.train[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{, ])}
+\hlstd{sigs.e} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(e.preds,} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlstd{true.sigs} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(Tdata.train[}\hlnum{1001}\hlopt{:}\hlnum{2000}\hlstd{,} \hlstr{"T.ind.GSPC"}\hlstd{],}
+                             \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlkwd{sigs.PR}\hlstd{(sigs.e, true.sigs)}
+\end{alltt}
+\begin{verbatim}
+##     precision recall
+## s      0.3849 0.3228
+## b      0.4483 0.1429
+## s+b    0.3918 0.2793
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The following is an illustration of a use-defined policy function:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{policy.1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{opened.pos}\hlstd{,} \hlkwc{money}\hlstd{,}
+                     \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{hold.time} \hlstd{=} \hlnum{10}\hlstd{,}
+                     \hlkwc{exp.prof} \hlstd{=} \hlnum{0.025}\hlstd{,} \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{)}
+\hlstd{\{}
+  \hlstd{d} \hlkwb{<-} \hlkwd{NROW}\hlstd{(market)} \hlcom{# this is the ID of today}
+  \hlstd{orders} \hlkwb{<-} \hlkwa{NULL}
+  \hlstd{nOs} \hlkwb{<-} \hlkwd{NROW}\hlstd{(opened.pos)}
+  \hlcom{#nothing to do!}
+  \hlkwa{if}\hlstd{(}\hlopt{!}\hlstd{nOs} \hlopt{&&} \hlstd{signals[d]} \hlopt{==} \hlstr{'h'}\hlstd{)} \hlkwd{return} \hlstd{(orders)}
+  \hlcom{#First lets check if we can open new positions}
+  \hlcom{#i)long positions}
+  \hlkwa{if}\hlstd{(signals[d]} \hlopt{==} \hlstr{'b'} \hlopt{&& !}\hlstd{nOs)\{}
+    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{money}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
+    \hlkwd{print}\hlstd{(quant)}
+    \hlkwa{if}\hlstd{(quant} \hlopt{>} \hlnum{0}\hlstd{)}
+      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,} \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{),}
+                                         \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
+                                         \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant,}
+                                                 \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                                   \hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp.prof),}
+                                                 \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                                   \hlstd{(}\hlnum{1} \hlopt{-} \hlstd{max.loss)),}
+                                         \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,}
+                                                    \hlstr{'close'}\hlstd{),}
+                                         \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
+                                         \hlstd{)}
+                      \hlstd{)}
+    \hlcom{#ii) short positions}
+  \hlstd{\}} \hlkwa{else if} \hlstd{(signals[d]} \hlopt{==} \hlstr{'s'} \hlopt{&& !}\hlstd{nOs) \{}
+    \hlcom{#This is the nr of stocks we already need to buy}
+    \hlcom{#because of currently opened short positions}
+    \hlstd{need2buy} \hlkwb{<-} \hlkwd{sum}\hlstd{(opened.pos[opened.pos[,} \hlstr{'pos.type'}\hlstd{]} \hlopt{== -}\hlnum{1}\hlstd{,}
+                               \hlstr{"N.stocks"}\hlstd{])}\hlopt{*}\hlstd{market[d,} \hlstr{'Close'}\hlstd{]}
+    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{(money}\hlopt{-}\hlstd{need2buy)}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
+    \hlkwa{if}\hlstd{(quant} \hlopt{>} \hlnum{0}\hlstd{)}
+      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
+                      \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{),}
+                                 \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
+                                 \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant, market[d,} \hlstr{'Close'}\hlstd{]}
+                                         \hlopt{*}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{exp.prof),}
+                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                           \hlstd{(}\hlnum{1} \hlopt{+} \hlstd{max.loss)),}
+                                 \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,}
+                                            \hlstr{'close'}\hlstd{),}
+                                 \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
+                                 \hlstd{)}
+                      \hlstd{)}
+  \hlstd{\}}
+  \hlcom{#let's check if we need to close positions}
+  \hlcom{#because their holding time is over }
+  \hlkwa{if}\hlstd{(nOs)}
+    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{nOs) \{}
+      \hlkwa{if}\hlstd{(d} \hlopt{-} \hlstd{opened.pos[i,} \hlstr{'Odate'}\hlstd{]} \hlopt{>=} \hlstd{hold.time)}
+        \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
+                        \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlopt{-}\hlstd{opened.pos[i,} \hlstr{'pos.type'}\hlstd{],}
+                                   \hlkwc{order.type} \hlstd{=} \hlnum{1}\hlstd{,}
+                                   \hlkwc{val} \hlstd{=} \hlnum{NA}\hlstd{,}
+                                   \hlkwc{action} \hlstd{=} \hlstr{'close'}\hlstd{,}
+                                   \hlkwc{posID} \hlstd{=} \hlkwd{rownames}\hlstd{(opened.pos)[i]}
+                                   \hlstd{)}
+                        \hlstd{)}
+        \hlstd{\}}
+  \hlstd{orders}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+the second strategy:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{policy.2} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{opened.pos}\hlstd{,} \hlkwc{money}\hlstd{,}
+                     \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{exp.prof} \hlstd{=} \hlnum{0.025}\hlstd{,}
+                     \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{)}
+\hlstd{\{}
+  \hlstd{d} \hlkwb{<-} \hlkwd{NROW}\hlstd{(market)} \hlcom{#this is the ID of today}
+  \hlstd{orders} \hlkwb{<-} \hlkwa{NULL}
+  \hlstd{nOs} \hlkwb{<-} \hlkwd{NROW}\hlstd{(opened.pos)}
+  \hlcom{#nothing to do}
+  \hlkwa{if}\hlstd{(}\hlopt{!}\hlstd{nOs} \hlopt{&&} \hlstd{signals[d]} \hlopt{==} \hlstr{'h'}\hlstd{)} \hlkwd{return} \hlstd{(orders)}
+  \hlcom{#First lets check if we can open new positions}
+  \hlcom{# i) long positions}
+  \hlkwa{if} \hlstd{(signals[d]} \hlopt{==} \hlstr{'b'}\hlstd{)\{}
+    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{money}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
+   \hlcom{# print(quant)}
+    \hlkwa{if} \hlstd{(quant} \hlopt{>} \hlnum{0}\hlstd{)}
+      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
+                      \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{),}
+                                 \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
+                                 \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant,}
+                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                           \hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp.prof),}
+                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                           \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{max.loss)}
+                                         \hlstd{),}
+                                 \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,}
+                                            \hlstr{'close'}\hlstd{),}
+                                 \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
+                                 \hlstd{)}
+                      \hlstd{)}
+  \hlstd{\}} \hlkwa{else if} \hlstd{(signals[d]} \hlopt{==} \hlstr{'s'}\hlstd{) \{}
+    \hlcom{#this is the money already commited to buy stocks}
+    \hlcom{#because of currently opened short positions}
+    \hlstd{need2buy} \hlkwb{<-} \hlkwd{sum}\hlstd{(opened.pos[opened.pos[,} \hlstr{'pos.type'}\hlstd{]} \hlopt{== -}\hlnum{1}\hlstd{,}
+                               \hlstr{"N.stocks"}\hlstd{])}\hlopt{*}\hlstd{market[d,} \hlstr{'Close'}\hlstd{]}
+    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{(money} \hlopt{-} \hlstd{need2buy)}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
+    \hlkwa{if}\hlstd{(quant} \hlopt{>}\hlnum{0}\hlstd{)}
+      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
+                      \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{),}
+                                 \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
+                                 \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant,}
+                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                           \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{exp.prof),}
+                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
+                                           \hlstd{(}\hlnum{1} \hlopt{+} \hlstd{max.loss)}
+                                         \hlstd{),}
+                                 \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,} \hlstr{'close'}\hlstd{),}
+                                 \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
+                                 \hlstd{)}
+                      \hlstd{)}
+  \hlstd{\}}
+  \hlstd{orders}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+Train and test periods
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{start} \hlkwb{<-} \hlnum{1}
+\hlstd{len.tr} \hlkwb{<-} \hlnum{1000}
+\hlstd{len.ts} \hlkwb{<-} \hlnum{500}
+\hlstd{tr} \hlkwb{<-} \hlstd{start}\hlopt{:}\hlstd{(start}\hlopt{+}\hlstd{len.tr}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlstd{ts} \hlkwb{<-} \hlstd{(start} \hlopt{+} \hlstd{len.tr)}\hlopt{:}\hlstd{(start}\hlopt{+}\hlstd{len.tr}\hlopt{+}\hlstd{len.ts}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlcom{#generate the quotes for the testing period}
+\hlkwd{data}\hlstd{(GSPC)}
+\hlstd{date} \hlkwb{<-} \hlkwd{rownames}\hlstd{(Tdata.train[start}\hlopt{+}\hlstd{len.tr, ])}
+\hlstd{market} \hlkwb{<-} \hlstd{GSPC[}\hlkwd{paste}\hlstd{(date,} \hlstr{'/'}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{''}\hlstd{)][}\hlnum{1}\hlopt{:}\hlstd{len.ts]}
+\hlcom{#learining the model and obtaining its signal predictions}
+\hlkwd{library}\hlstd{(e1071)}
+\hlstd{s} \hlkwb{<-} \hlkwd{svm}\hlstd{(Tform, Tdata.train[tr, ],} \hlkwc{cost} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{gamma} \hlstd{=} \hlnum{0.01}\hlstd{)}
+\hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(s, Tdata.train[ts, ])}
+\hlstd{sig} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(p,} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlcom{#now using the simulated trader}
+\hlstd{t1} \hlkwb{<-} \hlkwd{trading.simulator}\hlstd{(market, sig,} \hlstr{'policy.1'}\hlstd{,}
+                      \hlkwd{list}\hlstd{(}\hlkwc{exp.prof} \hlstd{=} \hlnum{0.05}\hlstd{,} \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,}
+                           \hlkwc{hold.time} \hlstd{=} \hlnum{30}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+## Money 
+##  2960
+\end{verbatim}
+\begin{alltt}
+\hlstd{t1}
+\end{alltt}
+\begin{verbatim}
+## 
+## Object of class tradeRecord with slots:
+## 
+## 	 trading: <xts object with a numeric  500 x 5  matrix>
+## 	 positions: <numeric  32 x 7  matrix>
+## 	 init.cap :  1e+06 
+## 	 trans.cost :  5 
+## 	 policy.func :  policy.1 
+## 	 policy.pars : <list with  3  elements>
+\end{verbatim}
+\begin{alltt}
+\hlkwd{summary}\hlstd{(t1)}
+\end{alltt}
+\begin{verbatim}
+## 
+## == Summary of a Trading Simulation with  500  days ==
+## 
+## Trading policy function :  policy.1 
+## Policy function parameters:
+## 	 exp.prof  =  0.05 
+## 	 bet  =  0.2 
+## 	 hold.time  =  30 
+## 
+## Transaction costs :  5 
+## Initial Equity    :  1e+06 
+## Final Equity      :  978118   Return :  -2.19 %
+## Number of trading positions:  32 
+## 
+## Use function "tradingEvaluation()" for further stats on this simulation.
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+Use function \textit{tradingEvaluation()} for further  stats on this simulation. The function \textit{tradingEvaluation()} can be used to obtain a series of ecnomic indicators of the performance during this simulation period:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{tradingEvaluation}\hlstd{(t1)}
+\end{alltt}
+\begin{verbatim}
+##     NTrades       NProf    PercProf          PL         Ret   RetOverBH 
+##       32.00       15.00       46.88   -21882.15       -2.19      -14.20 
+##       MaxDD SharpeRatio     AvgProf     AvgLoss       AvgPL     MaxProf 
+##    86836.76       -0.02        5.24       -4.76       -0.07        5.26 
+##     MaxLoss 
+##       -4.77
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+we can also obtain a graphical overview of the performanceo of trader using the function \textit{plot()} as follows:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(t1, market,} \hlkwc{theme} \hlstd{=} \hlstr{"white"}\hlstd{,} \hlkwc{name} \hlstd{=} \hlstr{"SP500"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/plot_tradeRecord_class} 
+\begin{kframe}\begin{verbatim}
+## Rentability =  -2.188 %
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The results of the trader are bad, with a negative return. Would the scenario be different if we use the second trading policy.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{t2} \hlkwb{<-} \hlkwd{trading.simulator}\hlstd{(market, sig,} \hlstr{"policy.2"}\hlstd{,}
+                        \hlkwd{list}\hlstd{(}\hlkwc{exp.prof} \hlstd{=} \hlnum{0.05}\hlstd{,} \hlkwc{bet} \hlstd{=} \hlnum{0.3}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+## Borrowing money ( 185420 ) for closing a short position (PosID= 90 )
+\end{verbatim}
+\begin{alltt}
+\hlkwd{summary}\hlstd{(t2)}
+\end{alltt}
+\begin{verbatim}
+## 
+## == Summary of a Trading Simulation with  500  days ==
+## 
+## Trading policy function :  policy.2 
+## Policy function parameters:
+## 	 exp.prof  =  0.05 
+## 	 bet  =  0.3 
+## 
+## Transaction costs :  5 
+## Initial Equity    :  1e+06 
+## Final Equity      :  1065530   Return :  6.55 %
+## Number of trading positions:  117 
+## 
+## Use function "tradingEvaluation()" for further stats on this simulation.
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+Let us repeat the experiment with a different training and testing period:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{start} \hlkwb{<-} \hlnum{2000}
+\hlstd{len.tr} \hlkwb{<-} \hlnum{1000}
+\hlstd{len.ts} \hlkwb{<-} \hlnum{500}
+\hlstd{tr} \hlkwb{<-} \hlstd{start}\hlopt{:}\hlstd{(start}\hlopt{+}\hlstd{len.tr} \hlopt{-} \hlnum{1}\hlstd{)}
+\hlstd{ts} \hlkwb{<-} \hlstd{(start}\hlopt{+}\hlstd{len.tr)}\hlopt{:}\hlstd{(start}\hlopt{+}\hlstd{len.tr}\hlopt{+}\hlstd{len.ts}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlstd{date} \hlkwb{<-} \hlkwd{rownames}\hlstd{(Tdata.train[start}\hlopt{+}\hlstd{len.tr, ])}
+\hlstd{market} \hlkwb{<-} \hlstd{GSPC[}\hlkwd{paste}\hlstd{(date,} \hlstr{'/'}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{""}\hlstd{)][}\hlnum{1}\hlopt{:}\hlstd{len.ts]}
+\hlstd{s} \hlkwb{<-} \hlkwd{svm}\hlstd{(Tform, Tdata.train[tr, ],} \hlkwc{cost} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{gamma} \hlstd{=} \hlnum{0.01}\hlstd{)}
+\hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(s, Tdata.train[ts, ])}
+\hlstd{sig} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(p,} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
+\hlstd{t2} \hlkwb{<-} \hlkwd{trading.simulator}\hlstd{(market, sig,} \hlstr{"policy.2"}\hlstd{,} \hlkwd{list}\hlstd{(}\hlkwc{exp.prof} \hlstd{=} \hlnum{0.05}\hlstd{,}
+                                                      \hlkwc{bet} \hlstd{=} \hlnum{0.3}\hlstd{))}
+\hlkwd{summary}\hlstd{(t2)}
+\end{alltt}
+\begin{verbatim}
+## 
+## == Summary of a Trading Simulation with  500  days ==
+## 
+## Trading policy function :  policy.2 
+## Policy function parameters:
+## 	 exp.prof  =  0.05 
+## 	 bet  =  0.3 
+## 
+## Transaction costs :  5 
+## Initial Equity    :  1e+06 
+## Final Equity      :  163277   Return :  -83.67 %
+## Number of trading positions:  254 
+## 
+## Use function "tradingEvaluation()" for further stats on this simulation.
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(t2, market,} \hlkwc{theme} \hlstd{=} \hlstr{"white"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/another_police_2} 
+\begin{kframe}\begin{verbatim}
+## Rentability =  -83.67 %
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The following code creats a set of functions that will be used to carray out a full train+test+evaluate cycle of the different trading systems we will compare.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{MC.svmR} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{b.t} \hlstd{=} \hlnum{0.1}\hlstd{,}
+                    \hlkwc{s.t} \hlstd{=} \hlopt{-}\hlnum{0.1}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{require}\hlstd{(e1071)}
+  \hlstd{t}\hlkwb{<-} \hlkwd{svm}\hlstd{(form, train, ...)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(t, test)}
+  \hlkwd{trading.signals}\hlstd{(p, b.t, s.t)}
+\hlstd{\}}
+\hlstd{MC.svmC} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{b.t} \hlstd{=} \hlnum{0.1}\hlstd{,}
+                    \hlkwc{s.t} \hlstd{=} \hlopt{-}\hlnum{0.1}\hlstd{,}\hlkwc{...}\hlstd{) \{}
+  \hlkwd{require}\hlstd{(e1071)}
+  \hlstd{tgtName} \hlkwb{<-} \hlkwd{all.vars}\hlstd{(form)[}\hlnum{1}\hlstd{]}
+  \hlstd{train[, tgtName]} \hlkwb{<-} \hlkwd{trading.signsls}\hlstd{(train[, tgtName],}
+                                      \hlstd{b.t, s.t)}
+  \hlstd{t} \hlkwb{<-} \hlkwd{svm}\hlstd{(form, train)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(t, test)}
+  \hlkwd{factor}\hlstd{(p,} \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"s"}\hlstd{,} \hlstr{"h"}\hlstd{,} \hlstr{"b"}\hlstd{))}
+\hlstd{\}}
+\hlstd{MC.nnetR} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{b.t} \hlstd{=} \hlnum{0.1}\hlstd{,}
+                     \hlkwc{s.t} \hlstd{=} \hlopt{-}\hlnum{0.1}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{require}\hlstd{(nnet)}
+  \hlstd{t} \hlkwb{<-} \hlkwd{nnet}\hlstd{(form, train, ...)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(t, test)}
+  \hlkwd{trading.signals}\hlstd{(p, b.t, s.t)}
+\hlstd{\}}
+\hlstd{MC.nnetC} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{b.t} \hlstd{=} \hlnum{0.1}\hlstd{,}
+                     \hlkwc{s.t} \hlstd{=} \hlnum{0.1}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{require}\hlstd{(nnet)}
+  \hlstd{tgtName} \hlkwb{<-} \hlkwd{all.vars}\hlstd{(form)[}\hlnum{1}\hlstd{]}
+  \hlstd{train[, tgtName]} \hlkwb{<-} \hlkwd{trading.singals}\hlstd{(train[ , tgtName],}
+                                      \hlstd{b.t, s.t)}
+  \hlstd{t} \hlkwb{<-} \hlkwd{nnet}\hlstd{(form, train, ...)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(t, test,} \hlkwc{type} \hlstd{=} \hlstr{"class"}\hlstd{)}
+  \hlkwd{factor}\hlstd{(p,} \hlkwc{levels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"s"}\hlstd{,} \hlstr{"h"}\hlstd{,} \hlstr{"b"}\hlstd{))}
+\hlstd{\}}
+\hlstd{MC.earth} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{b.t} \hlstd{=} \hlnum{0.1}\hlstd{,}
+                     \hlkwc{s.t} \hlstd{=} \hlopt{-}\hlnum{0.1}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{require}\hlstd{(earth)}
+  \hlstd{t} \hlkwb{<-} \hlkwd{earth}\hlstd{(form, train,...)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(t, test)}
+  \hlkwd{trading.signals}\hlstd{(p, b.t, s.t)}
+\hlstd{\}}
+\hlstd{singleModel} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{learner}\hlstd{,} \hlkwc{policy.func}\hlstd{,}
+                        \hlkwc{...}\hlstd{)\{}
+  \hlstd{p} \hlkwb{<-} \hlkwd{do.call}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"MC"}\hlstd{, learner,} \hlkwc{sep} \hlstd{=} \hlstr{"."}\hlstd{),} \hlkwd{list}\hlstd{(form, train,}
+                                                     \hlstd{test, ...))}
+  \hlkwd{eval.stats}\hlstd{(form, train, test, p,} \hlkwc{policy.func} \hlstd{= policy.func)}
+  \hlstd{\}}
+\hlstd{grow} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{learner}\hlstd{,} \hlkwc{relearn.step}\hlstd{,}
+                 \hlkwc{policy.func}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlstd{real.learner} \hlkwb{<-} \hlkwd{learner}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"MC"}\hlstd{, learner,} \hlkwc{sep} \hlstd{=} \hlstr{"."}\hlstd{),}
+                           \hlkwc{pars} \hlstd{=}\hlkwd{list}\hlstd{(...))}
+  \hlstd{p} \hlkwb{<-} \hlkwd{growingWindowTest}\hlstd{(real.learner, form, train, test,}
+                         \hlstd{relearn.step)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{factor}\hlstd{(p,} \hlkwc{levels} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,} \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"s"}\hlstd{,} \hlstr{"h"}\hlstd{,} \hlstr{"b"}\hlstd{))}
+  \hlkwd{eval.stats}\hlstd{(form, train, test, p,} \hlkwc{policy.func} \hlstd{= policy.func)}
+  \hlstd{\}}
+\hlstd{slide} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{learner}\hlstd{,} \hlkwc{relearn.step}\hlstd{,}
+                  \hlkwc{policy.func}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlstd{real.learner} \hlkwb{<-} \hlkwd{learner}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"MC"}\hlstd{, learner,} \hlkwc{sep} \hlstd{=} \hlstr{"."}\hlstd{),}
+                           \hlkwc{pars} \hlstd{=}\hlkwd{list}\hlstd{(...))}
+  \hlstd{p} \hlkwb{<-} \hlkwd{slidingWindowTest}\hlstd{(real.learner, form, train, test,}
+                         \hlstd{relearn.step)}
+  \hlstd{p} \hlkwb{<-} \hlkwd{factor}\hlstd{(p,} \hlkwc{levels} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,} \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"s"}\hlstd{,} \hlstr{"h"}\hlstd{,} \hlstr{"b"}\hlstd{))}
+  \hlkwd{eval.stats}\hlstd{(form, train, test, p,} \hlkwc{policy.func} \hlstd{= policy.func)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{eval.stats} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{form}\hlstd{,} \hlkwc{train}\hlstd{,} \hlkwc{test}\hlstd{,} \hlkwc{preds}\hlstd{,} \hlkwc{b.t} \hlstd{=} \hlnum{0.1}\hlstd{,}
+                       \hlkwc{s.t} \hlstd{=} \hlnum{0.1}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlcom{#Signals evaluation}
+  \hlstd{tgtName} \hlkwb{<-} \hlkwd{all.vars}\hlstd{(form)[}\hlnum{1}\hlstd{]}
+  \hlstd{test[, tgtName]} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(test[ , tgtName], b.t,}
+                                     \hlstd{s.t)}
+  \hlstd{st} \hlkwb{<-} \hlkwd{sigs.PR}\hlstd{(preds, test[, tgtName])}
+  \hlkwd{dim}\hlstd{(st)} \hlkwb{<-} \hlkwa{NULL}
+  \hlkwd{names}\hlstd{(st)} \hlkwb{<-} \hlkwd{paste}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{'prec'}\hlstd{,} \hlstr{'rec'}\hlstd{),} \hlkwc{each} \hlstd{=} \hlnum{3}\hlstd{),}
+                     \hlkwd{c}\hlstd{(}\hlstr{'s'}\hlstd{,} \hlstr{'b'}\hlstd{,} \hlstr{'sb'}\hlstd{),} \hlkwc{sep} \hlstd{=} \hlstr{'.'}\hlstd{)}
+
+  \hlcom{#Trading evaluation }
+  \hlstd{date} \hlkwb{<-} \hlkwd{rownames}\hlstd{(test)[}\hlnum{1}\hlstd{]}
+  \hlstd{market} \hlkwb{<-} \hlstd{GSPC[}\hlkwd{paste}\hlstd{(date,} \hlstr{"/"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{''}\hlstd{)][}\hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(test), ]}
+  \hlstd{trade.res} \hlkwb{<-} \hlkwd{trading.simulator}\hlstd{(market, preds, ...)}
+  \hlkwd{c}\hlstd{(st,} \hlkwd{tradingEvaluation}\hlstd{(trade.res))}
+                       \hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+some policy
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{pol1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{op}\hlstd{,} \hlkwc{money}\hlstd{)}
+  \hlkwd{policy.1}\hlstd{(signals, market, op, money,}
+           \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{exp.prof} \hlstd{=} \hlnum{0.025}\hlstd{,} \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{,}
+           \hlkwc{hold.time} \hlstd{=} \hlnum{10}\hlstd{)}
+\hlstd{pol2} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{op}\hlstd{,} \hlkwc{money}\hlstd{)}
+  \hlkwd{policy.1}\hlstd{(signals, market, op, money,}
+           \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{exp.prof} \hlstd{=} \hlnum{0.05}\hlstd{,} \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{,}
+           \hlkwc{hold.time} \hlstd{=} \hlnum{20}\hlstd{)}
+\hlstd{pol3} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{op}\hlstd{,} \hlkwc{money}\hlstd{)}
+  \hlkwd{policy.2}\hlstd{(signals, market, op, money,}
+           \hlkwc{bet} \hlstd{=} \hlnum{0.5}\hlstd{,} \hlkwc{exp.prof} \hlstd{=} \hlnum{0.05}\hlstd{,} \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+Model evaluation
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# The list of learners we will use}
+\hlstd{TODO} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{'svmR'}\hlstd{,}\hlstr{'svmC'}\hlstd{,}\hlstr{'earth'}\hlstd{,}\hlstr{'nnetR'}\hlstd{,}\hlstr{'nnetC'}\hlstd{)}
+
+\hlcom{# The data sets used in the comparison}
+\hlstd{DSs} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwd{dataset}\hlstd{(Tform,Tdata.train,}\hlstr{'test'}\hlstd{))}
+
+\hlcom{# Monte Carlo (MC) settings used}
+\hlstd{MCsetts} \hlkwb{<-} \hlkwd{mcSettings}\hlstd{(}\hlnum{20}\hlstd{,}     \hlcom{# 20 repetitions of the MC exps}
+                      \hlnum{2540}\hlstd{,}   \hlcom{# ~ 10 years for training}
+                      \hlnum{1270}\hlstd{,}   \hlcom{# ~ 5 years for testing}
+                      \hlnum{1234}\hlstd{)}   \hlcom{# random number generator seed}
+
+\hlcom{# Variants to try for all learners}
+\hlstd{VARS} \hlkwb{<-} \hlkwd{list}\hlstd{()}
+\hlstd{VARS}\hlopt{$}\hlstd{svmR}   \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{cost}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{10}\hlstd{,}\hlnum{150}\hlstd{),}\hlkwc{gamma}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.01}\hlstd{,}\hlnum{0.001}\hlstd{),}
+                    \hlkwc{policy.func}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'pol1'}\hlstd{,}\hlstr{'pol2'}\hlstd{,}\hlstr{'pol3'}\hlstd{))}
+\hlstd{VARS}\hlopt{$}\hlstd{svmC}   \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{cost}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{10}\hlstd{,}\hlnum{150}\hlstd{),}\hlkwc{gamma}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.01}\hlstd{,}\hlnum{0.001}\hlstd{),}
+                    \hlkwc{policy.func}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'pol1'}\hlstd{,}\hlstr{'pol2'}\hlstd{,}\hlstr{'pol3'}\hlstd{))}
+\hlstd{VARS}\hlopt{$}\hlstd{earth} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{nk}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{10}\hlstd{,}\hlnum{17}\hlstd{),}\hlkwc{degree}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{),}\hlkwc{thresh}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.01}\hlstd{,}\hlnum{0.001}\hlstd{),}
+                   \hlkwc{policy.func}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'pol1'}\hlstd{,}\hlstr{'pol2'}\hlstd{,}\hlstr{'pol3'}\hlstd{))}
+\hlstd{VARS}\hlopt{$}\hlstd{nnetR}  \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{linout}\hlstd{=T,}\hlkwc{maxit}\hlstd{=}\hlnum{750}\hlstd{,}\hlkwc{size}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{10}\hlstd{),}
+                    \hlkwc{decay}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.001}\hlstd{,}\hlnum{0.01}\hlstd{),}
+                    \hlkwc{policy.func}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'pol1'}\hlstd{,}\hlstr{'pol2'}\hlstd{,}\hlstr{'pol3'}\hlstd{))}
+\hlstd{VARS}\hlopt{$}\hlstd{nnetC}  \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{maxit}\hlstd{=}\hlnum{750}\hlstd{,}\hlkwc{size}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{10}\hlstd{),}\hlkwc{decay}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.001}\hlstd{,}\hlnum{0.01}\hlstd{),}
+                    \hlkwc{policy.func}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'pol1'}\hlstd{,}\hlstr{'pol2'}\hlstd{,}\hlstr{'pol3'}\hlstd{))}
+
+\hlcom{# main loop}
+\hlkwa{for}\hlstd{(td} \hlkwa{in} \hlstd{TODO) \{}
+  \hlkwd{assign}\hlstd{(td,}
+         \hlkwd{experimentalComparison}\hlstd{(}
+           \hlstd{DSs,}
+           \hlkwd{c}\hlstd{(}
+             \hlkwd{do.call}\hlstd{(}\hlstr{'variants'}\hlstd{,}
+                     \hlkwd{c}\hlstd{(}\hlkwd{list}\hlstd{(}\hlstr{'singleModel'}\hlstd{,}\hlkwc{learner}\hlstd{=td),VARS[[td]],}
+                       \hlkwc{varsRootName}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{'single'}\hlstd{,td,}\hlkwc{sep}\hlstd{=}\hlstr{'.'}\hlstd{))),}
+             \hlkwd{do.call}\hlstd{(}\hlstr{'variants'}\hlstd{,}
+                     \hlkwd{c}\hlstd{(}\hlkwd{list}\hlstd{(}\hlstr{'slide'}\hlstd{,}\hlkwc{learner}\hlstd{=td,}
+                            \hlkwc{relearn.step}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{60}\hlstd{,}\hlnum{120}\hlstd{)),}
+                       \hlstd{VARS[[td]],}
+                       \hlkwc{varsRootName}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{'slide'}\hlstd{,td,}\hlkwc{sep}\hlstd{=}\hlstr{'.'}\hlstd{))),}
+             \hlkwd{do.call}\hlstd{(}\hlstr{'variants'}\hlstd{,}
+                     \hlkwd{c}\hlstd{(}\hlkwd{list}\hlstd{(}\hlstr{'grow'}\hlstd{,}\hlkwc{learner}\hlstd{=td,}
+                            \hlkwc{relearn.step}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{60}\hlstd{,}\hlnum{120}\hlstd{)),}
+                       \hlstd{VARS[[td]],}
+                       \hlkwc{varsRootName}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{'grow'}\hlstd{,td,}\hlkwc{sep}\hlstd{=}\hlstr{'.'}\hlstd{)))}
+             \hlstd{),}
+            \hlstd{MCsetts)}
+         \hlstd{)}
+
+  \hlcom{# save the results}
+  \hlkwd{save}\hlstd{(}\hlkwc{list}\hlstd{=td,}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(td,}\hlstr{'Rdata'}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{'.'}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+load the result data
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{load}\hlstd{(}\hlstr{"svmR.Rdata"}\hlstd{)}
+\hlkwd{load}\hlstd{(}\hlstr{"svmC.Rdata"}\hlstd{)}
+\hlkwd{load}\hlstd{(}\hlstr{"earth.Rdata"}\hlstd{)}
+\hlkwd{load}\hlstd{(}\hlstr{"nnetR.Rdata"}\hlstd{)}
+\hlkwd{load}\hlstd{(}\hlstr{"nnetC.Rdata"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+rank the model with the evaluation statistics in which we are interested
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{tgtStats} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{'prec.sb'}\hlstd{,} \hlstr{'Ret'}\hlstd{,} \hlstr{'PercProf'}\hlstd{,} \hlstr{'MaxDD'}\hlstd{,}
+              \hlstr{'SharpeRatio'}\hlstd{)}
+\hlstd{allSysRes} \hlkwb{<-} \hlkwd{join}\hlstd{(}\hlkwd{subset}\hlstd{(svmR,} \hlkwc{stats} \hlstd{= tgtStats),}
+            \hlkwd{subset}\hlstd{(svmC,} \hlkwc{stats} \hlstd{= tgtStats),}
+            \hlkwd{subset}\hlstd{(nnetR,} \hlkwc{stats} \hlstd{= tgtStats),}
+            \hlkwd{subset}\hlstd{(nnetC,} \hlkwc{stats} \hlstd{= tgtStats),}
+            \hlkwd{subset}\hlstd{(earth,} \hlkwc{stats} \hlstd{= tgtStats),}
+            \hlkwc{by} \hlstd{=} \hlstr{'variants'}\hlstd{)}
+\hlkwd{rankSystems}\hlstd{(allSysRes,} \hlnum{5}\hlstd{,} \hlkwc{maxs} \hlstd{=} \hlkwd{c}\hlstd{(T, T, T, F, T))}
+\end{alltt}
+\begin{verbatim}
+## $SP500
+## $SP500$prec.sb
+##           system score
+## 1  slide.svmC.v5     1
+## 2  slide.svmC.v6     1
+## 3 slide.svmC.v13     1
+## 4 slide.svmC.v14     1
+## 5 slide.svmC.v21     1
+## 
+## $SP500$Ret
+##             system   score
+## 1 single.nnetR.v12 97.4240
+## 2  single.svmR.v11  3.4960
+## 3  slide.nnetR.v15  2.6230
+## 4  single.svmC.v12  0.7875
+## 5   single.svmR.v8  0.6115
+## 
+## $SP500$PercProf
+##          system score
+## 1 grow.nnetR.v5 60.42
+## 2 grow.nnetR.v6 60.36
+## 3 slide.svmR.v3 60.36
+## 4  grow.svmR.v3 59.87
+## 5 grow.nnetC.v1 59.86
+## 
+## $SP500$MaxDD
+##           system score
+## 1  slide.svmC.v5 197.4
+## 2  slide.svmC.v6 197.4
+## 3   grow.svmC.v5 197.4
+## 4   grow.svmC.v6 197.4
+## 5 slide.svmC.v13 399.3
+## 
+## $SP500$SharpeRatio
+##           system score
+## 1  slide.svmC.v5  0.02
+## 2  slide.svmC.v6  0.02
+## 3 slide.svmC.v13  0.02
+## 4 slide.svmC.v14  0.02
+## 5 slide.svmC.v21  0.02
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+Obtaining 100\% precision seems strange. A closer inspection of the results of systems will real that this score is achieved thanks to a very small number of signals during the 5-year testing period.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{summary}\hlstd{(}\hlkwd{subset}\hlstd{(svmC,}
+               \hlkwc{stats} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'Ret'}\hlstd{,} \hlstr{'RetOverBH'}\hlstd{,} \hlstr{'PercProf'}\hlstd{,} \hlstr{'NTrades'}\hlstd{),}
+               \hlkwc{vars} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'slide.svmC.v5'}\hlstd{,} \hlstr{'slide.svmC.v6'}\hlstd{)))}
+\end{alltt}
+\begin{verbatim}
+## 
+## == Summary of a  Monte Carlo  Experiment ==
+## 
+##  20  repetitions Monte Carlo Simulation using: 
+## 	 seed =  1234 
+## 	 train size =  2540  cases 
+## 	 test size =  1270  cases 
+## 
+## * Data sets ::  SP500
+## * Learners  ::  slide.svmC.v5, slide.svmC.v6
+## 
+## * Summary of Experiment Results:
+## 
+## 
+## -> Datataset:  SP500 
+## 
+## 	*Learner: slide.svmC.v5 
+##            Ret RetOverBH PercProf NTrades
+## avg     0.0250    -77.10     5.00  0.0500
+## std     0.1118     33.12    22.36  0.2236
+## min     0.0000   -128.01     0.00  0.0000
+## max     0.5000    -33.77   100.00  1.0000
+## invalid 0.0000      0.00     0.00  0.0000
+## 
+## 	*Learner: slide.svmC.v6 
+##            Ret RetOverBH PercProf NTrades
+## avg     0.0250    -77.10     5.00  0.0500
+## std     0.1118     33.12    22.36  0.2236
+## min     0.0000   -128.01     0.00  0.0000
+## max     0.5000    -33.77   100.00  1.0000
+## invalid 0.0000      0.00     0.00  0.0000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+In order to reach some conclusions on the value of all these variants, we need to add some constraints on some of the statistics.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{fullResults} \hlkwb{<-} \hlkwd{join}\hlstd{(svmR, svmC, nnetR, nnetC, earth,}
+                    \hlkwc{by} \hlstd{=} \hlstr{"variants"}\hlstd{)}
+\hlstd{nt} \hlkwb{<-} \hlkwd{statScores}\hlstd{(fullResults,} \hlstr{"NTrades"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{rt} \hlkwb{<-} \hlkwd{statScores}\hlstd{(fullResults,} \hlstr{"Ret"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{pp} \hlkwb{<-} \hlkwd{statScores}\hlstd{(fullResults,} \hlstr{"PercProf"}\hlstd{)[[}\hlnum{1}\hlstd{]]}
+\hlstd{s1} \hlkwb{<-} \hlkwd{names}\hlstd{(nt)[}\hlkwd{which}\hlstd{(nt} \hlopt{>} \hlnum{20}\hlstd{)]}
+\hlstd{s2} \hlkwb{<-} \hlkwd{names}\hlstd{(rt)[}\hlkwd{which}\hlstd{(rt} \hlopt{>} \hlnum{0.5}\hlstd{)]}
+\hlstd{s3} \hlkwb{<-} \hlkwd{names}\hlstd{(pp)[}\hlkwd{which}\hlstd{(pp} \hlopt{>} \hlnum{40}\hlstd{)]}
+\hlstd{namesBest} \hlkwb{<-} \hlkwd{intersect}\hlstd{(}\hlkwd{intersect}\hlstd{(s1, s2), s3)}
+\hlkwd{summary}\hlstd{(}\hlkwd{subset}\hlstd{(fullResults,} \hlkwc{stats} \hlstd{= tgtStats,} \hlkwc{vars} \hlstd{= namesBest))}
+\end{alltt}
+\begin{verbatim}
+## 
+## == Summary of a  Monte Carlo  Experiment ==
+## 
+##  20  repetitions Monte Carlo Simulation using: 
+## 	 seed =  1234 
+## 	 train size =  2540  cases 
+## 	 test size =  1270  cases 
+## 
+## * Data sets ::  SP500
+## * Learners  ::  single.nnetR.v12, slide.nnetR.v15, grow.nnetR.v12
+## 
+## * Summary of Experiment Results:
+## 
+## 
+## -> Datataset:  SP500 
+## 
+## 	*Learner: single.nnetR.v12 
+##         prec.sb     Ret PercProf    MaxDD SharpeRatio
+## avg     0.12893   97.42    45.89  1595761    -0.01300
+## std     0.06766  650.86    14.05  2205914     0.03799
+## min     0.02581 -160.42    21.50   257067    -0.08000
+## max     0.28696 2849.85    73.08 10142085     0.04000
+## invalid 0.00000    0.00     0.00        0     0.00000
+## 
+## 	*Learner: slide.nnetR.v15 
+##         prec.sb    Ret PercProf MaxDD SharpeRatio
+## avg     0.14028  2.623   54.361 46786     0.01500
+## std     0.05111  4.932    8.339 23526     0.03052
+## min     0.03030 -7.030   38.890 18454    -0.04000
+## max     0.22047  9.850   68.970 99458     0.05000
+## invalid 0.00000  0.000    0.000     0     0.00000
+## 
+## 	*Learner: grow.nnetR.v12 
+##         prec.sb      Ret PercProf  MaxDD SharpeRatio
+## avg     0.18775   0.5445    52.66  41998     0.00600
+## std     0.07964   4.3342    11.61  28252     0.03409
+## min     0.04412 -10.7600    22.22  18144    -0.09000
+## max     0.33077   5.3300    72.73 121886     0.05000
+## invalid 0.00000   0.0000     0.00      0     0.00000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The following code carries out a statistical analysis of the results using the function \textit{compAnalysis()}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{compAnalysis}\hlstd{(}\hlkwd{subset}\hlstd{(fullResults,} \hlkwc{stats} \hlstd{= tgtStats,}
+                   \hlkwc{vars} \hlstd{= namesBest))}
+\end{alltt}
+\begin{verbatim}
+## 
+## == Statistical Significance Analysis of Comparison Results ==
+## 
+## Baseline Learner::	 single.nnetR.v12  (Learn.1)
+## 
+## ** Evaluation Metric::	 prec.sb 
+## 
+## - Dataset: SP500 
+##     Learn.1 Learn.2 sig.2 Learn.3 sig.3
+## AVG 0.12893 0.14028       0.18775    + 
+## STD 0.06766 0.05111       0.07964      
+## 
+## ** Evaluation Metric::	 Ret 
+## 
+## - Dataset: SP500 
+##     Learn.1 Learn.2 sig.2 Learn.3 sig.3
+## AVG   97.42   2.623    -   0.5445    - 
+## STD  650.86   4.932        4.3342      
+## 
+## ** Evaluation Metric::	 PercProf 
+## 
+## - Dataset: SP500 
+##     Learn.1 Learn.2 sig.2 Learn.3 sig.3
+## AVG   45.89  54.361    +    52.66      
+## STD   14.05   8.339         11.61      
+## 
+## ** Evaluation Metric::	 MaxDD 
+## 
+## - Dataset: SP500 
+##     Learn.1 Learn.2 sig.2 Learn.3 sig.3
+## AVG 1595761   46786    --   41998    --
+## STD 2205914   23526         28252      
+## 
+## ** Evaluation Metric::	 SharpeRatio 
+## 
+## - Dataset: SP500 
+##      Learn.1 Learn.2 sig.2 Learn.3 sig.3
+## AVG -0.01300 0.01500    +  0.00600      
+## STD  0.03799 0.03052       0.03409      
+## 
+## Legends:
+## Learners -> Learn.1 = single.nnetR.v12 ; Learn.2 = slide.nnetR.v15 ; Learn.3 = grow.nnetR.v12 ; 
+## Signif. Codes -> 0 '++' or '--' 0.001 '+' or '-' 0.05 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+we may have a better idea of the distributions of the scores on some of these statistics across all 20 repetitions by plotting the \textit{comExp}
+object:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwd{subset}\hlstd{(fullResults,} \hlkwc{stats} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'Ret'}\hlstd{,} \hlstr{'PercProf'}\hlstd{,} \hlstr{'MaxDD'}\hlstd{),}
+            \hlkwc{vars} \hlstd{= namesBest))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/comExp_plot} 
+
+\end{knitrout}
+we can check configuration of the particular trading system using the function \textit{getVariant}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getVariant}\hlstd{(}\hlstr{"single.nnetR.v12"}\hlstd{, nnetR)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Learner::  "single" 
+## 
+## Parameter values
+## 	 learner  =  "nnetR" 
+## 	 linout  =  TRUE 
+## 	 trace  =  FALSE 
+## 	 maxit  =  750 
+## 	 size  =  10 
+## 	 decay  =  0.01 
+## 	 policy.func  =  "pol3"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The following code obtain the evaluation statistics of these systems on the 
+9-year test period.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Tdata.train} \hlkwb{<-} \hlkwd{as.data.frame}\hlstd{(}\hlkwd{modelData}\hlstd{(data.model,} \hlkwc{data.window} \hlstd{=}
+                                         \hlkwd{c}\hlstd{(}\hlstr{'1970-01-02'}\hlstd{,}\hlstr{'1999-12-31'}\hlstd{)))}
+\hlstd{Tdata.eval} \hlkwb{<-} \hlkwd{na.omit}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(}\hlkwd{modelData}\hlstd{(data.model,}
+                                               \hlkwd{c}\hlstd{(}\hlstr{'2000-01-01'}\hlstd{,}
+                                                 \hlstr{'2009-09-15'}\hlstd{))))}
+\hlstd{data} \hlkwb{<-} \hlkwd{tail}\hlstd{(Tdata.train,} \hlnum{2540}\hlstd{)}
+\hlstd{results} \hlkwb{<-} \hlkwd{list}\hlstd{()}
+\hlkwa{for}\hlstd{(name} \hlkwa{in} \hlstd{namesBest[}\hlnum{2}\hlopt{:}\hlnum{3}\hlstd{]) \{}
+  \hlstd{sys} \hlkwb{<-} \hlkwd{getVariant}\hlstd{(name, fullResults)}
+  \hlstd{results[[name]]} \hlkwb{<-} \hlkwd{runLearner}\hlstd{(sys, Tform, data, Tdata.eval)}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## *****************************************
+## *********************
+\end{verbatim}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: no non-missing arguments to max; returning -Inf\\\#\# Warning: no non-missing arguments to min; returning Inf}}\begin{alltt}
+\hlstd{results} \hlkwb{<-} \hlkwd{t}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(results))}
+\hlstd{results[,} \hlkwd{c}\hlstd{(}\hlstr{"Ret"}\hlstd{,} \hlstr{"RetOverBH"}\hlstd{,} \hlstr{"MaxDD"}\hlstd{,} \hlstr{"SharpeRatio"}\hlstd{,} \hlstr{"NTrades"}\hlstd{,}
+            \hlstr{"PercProf"}\hlstd{)]}
+\end{alltt}
+\begin{verbatim}
+##                   Ret RetOverBH MaxDD SharpeRatio NTrades PercProf
+## slide.nnetR.v15  0.00      0.38     0         NaN       0        0
+## grow.nnetR.v12  -0.72     -0.34  8325       -0.36       1        0
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The best model has the following characteristics:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getVariant}\hlstd{(}\hlstr{"slide.nnetR.v15"}\hlstd{, fullResults)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Learner::  "slide" 
+## 
+## Parameter values
+## 	 learner  =  "nnetR" 
+## 	 relearn.step  =  60 
+## 	 linout  =  TRUE 
+## 	 trace  =  FALSE 
+## 	 maxit  =  750 
+## 	 size  =  10 
+## 	 decay  =  0.01 
+## 	 policy.func  =  "pol2"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+we obtain the trading record of the system during this period.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{model} \hlkwb{<-} \hlkwd{learner}\hlstd{(}\hlstr{"MC.nnetR"}\hlstd{,} \hlkwd{list}\hlstd{(}\hlkwc{maxit} \hlstd{=} \hlnum{759}\hlstd{,} \hlkwc{linout} \hlstd{= T,}
+                                  \hlkwc{trace} \hlstd{= F,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,}
+                                  \hlkwc{decay} \hlstd{=} \hlnum{0.01}\hlstd{))}
+\hlstd{preds} \hlkwb{<-} \hlkwd{growingWindowTest}\hlstd{(model, Tform, data, Tdata.eval,}
+                           \hlkwc{relearn.step} \hlstd{=} \hlnum{120}\hlstd{)}
+\hlstd{signals} \hlkwb{<-} \hlkwd{factor}\hlstd{(preds,} \hlkwc{levels} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,} \hlkwc{labels} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"s"}\hlstd{,} \hlstr{"h"}\hlstd{,} \hlstr{"b"}\hlstd{))}
+\hlstd{date} \hlkwb{<-} \hlkwd{rownames}\hlstd{(Tdata.eval)[}\hlnum{1}\hlstd{]}
+\hlstd{market} \hlkwb{<-} \hlstd{GSPC[}\hlkwd{paste}\hlstd{(date,} \hlstr{"/"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{""}\hlstd{)][}\hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(signals), ]}
+\hlstd{trade.res} \hlkwb{<-} \hlkwd{trading.simulator}\hlstd{(market, signals,} \hlkwc{policy.func} \hlstd{=} \hlstr{"pol2"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(trade.res, market,} \hlkwc{theme} \hlstd{=} \hlstr{"white"}\hlstd{,} \hlkwc{name} \hlstd{=} \hlstr{"SP500-final test"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/plot_trade_res} 
+\begin{kframe}\begin{verbatim}
+## Rentability =  11.05 %
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The returns of our strategy can be obtained as follows:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(PerformanceAnalytics)}
+\hlstd{rets} \hlkwb{<-} \hlkwd{Return.calculate}\hlstd{(trade.res}\hlopt{@}\hlkwc{trading}\hlopt{$}\hlstd{Equity)}
+\hlkwd{chart.CumReturns}\hlstd{(rets,} \hlkwc{main} \hlstd{=} \hlstr{"Cumulative returns"}\hlstd{,}
+                 \hlkwc{ylab} \hlstd{=} \hlstr{"returns"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/PerformanceAnalytics1} 
+\begin{kframe}\begin{alltt}
+\hlcom{#periodReturn(trade.res@trading$Equity, period = "yearly")}
+\hlkwd{head}\hlstd{(}\hlkwd{yearlyReturn}\hlstd{(}\hlkwd{xts}\hlstd{(trade.res}\hlopt{@}\hlkwc{trading}\hlopt{$}\hlstd{Equity)))}
+\end{alltt}
+\begin{verbatim}
+##            yearly.returns
+## 2000-12-29      0.0559194
+## 2001-12-31      0.0700963
+## 2002-12-31      0.0354678
+## 2003-12-31     -0.0220358
+## 2004-12-31      0.0094184
+## 2005-12-30      0.0003918
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlnum{100}\hlopt{*}\hlkwd{yearlyReturn}\hlstd{(}\hlkwd{xts}\hlstd{(trade.res}\hlopt{@}\hlkwc{trading}\hlopt{$}\hlstd{Equity)),}
+     \hlkwc{main} \hlstd{=} \hlstr{"Yearly percentage returns"}\hlstd{)}
+\hlkwd{abline}\hlstd{(}\hlkwc{h} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/PerformanceAnalytics2} 
+
+\end{knitrout}
+let's get even more detailed information with a table of the percentage monthly returns of a strategy(the last column is the sum over of the year):
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{table.CalendarReturns}\hlstd{(}\hlkwd{xts}\hlstd{(rets))}
+\end{alltt}
+\begin{verbatim}
+##       1月  2月  3月  4月  5月  6月  7月  8月  9月 10月 11月 12月    x
+## 2000  0.0  0.3  0.0  0.2  0.0 -0.2  0.2  0.2  0.0  0.0  0.0  0.1  0.7
+## 2001 -0.1 -0.3  0.2 -0.1 -0.1  0.0 -0.1 -0.1  0.4  0.0  0.0  0.0 -0.1
+## 2002  0.0  0.1  0.0 -0.2  0.0  0.0  0.2  0.0 -0.6 -0.1  0.0  0.0 -0.8
+## 2003 -0.3 -0.1  0.4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+## 2004  0.0  0.0  0.0  0.1  0.0 -0.1  0.0  0.0  0.0  0.0  0.0  0.0  0.1
+## 2005  0.0  0.0  0.0 -0.2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 -0.2
+## 2006  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   NA
+## 2007  0.0  0.0  0.0  0.0  0.0  0.0  0.2 -0.2  0.0  0.0 -0.2  0.1  0.0
+## 2008 -0.3  0.5  0.0  0.1  0.0  0.0  0.3  0.3  0.9  0.3  0.2  0.3  2.4
+## 2009 -0.5 -0.5 -0.2  0.0  0.0  0.0  0.0  0.0   NA   NA   NA   NA -1.1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+obtain the information concerning the risk analysis of the strategy
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{table.DownsideRisk}\hlstd{(}\hlkwd{xts}\hlstd{(rets))}
+\end{alltt}
+\begin{verbatim}
+##                                     x
+## Semi Deviation                 0.0015
+## Gain Deviation                 0.0021
+## Loss Deviation                 0.0022
+## Downside Deviation (MAR=210%)  0.0086
+## Downside Deviation (Rf=0%)     0.0015
+## Downside Deviation (0%)        0.0015
+## Maximum Drawdown               0.0803
+## Historical VaR (95%)          -0.0036
+## Historical ES (95%)           -0.0057
+## Modified VaR (95%)            -0.0033
+## Modified ES (95%)             -0.0053
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+

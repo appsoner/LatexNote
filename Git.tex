@@ -1,0 +1,130 @@
+\documentclass[UTF8]{ctexart}
+%\usepackage{CJKutf8}
+\setCJKmainfont{KaiTi}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{%
+alsolanguage = Python,	
+%alsolanguage=Java,  
+%language={[ISO]C++},       %language为，还有{[Visual]C++}  
+%alsolanguage=[ANSI]C,      %可以添加很多个alsolanguage,如alsolanguage=matlab,alsolanguage=VHDL等  
+%alsolanguage= tcl,  
+alsolanguage= XML,  
+tabsize=4, %  
+frame=shadowbox, %把代码用带有阴影的框圈起来  
+commentstyle=\color{red!60!blue!90},%浅灰色的注释  
+rulesepcolor=\color{red!20!green!20!blue!20},%代码块边框为淡青色  
+keywordstyle=\color{blue!90}\bfseries, %代码关键字的颜色为蓝色，粗体  
+showstringspaces=false,%不显示代码字符串中间的空格标记  
+stringstyle=\ttfamily, % 代码字符串的特殊格式  
+keepspaces=true, %  
+breakindent=22pt, %  
+numbers=left,%左侧显示行号 往左靠,还可以为right，或none，即不加行号  
+stepnumber=1,%若设置为2，则显示行号为1,3,5，即stepnumber为公差,默认stepnumber=1  
+%numberstyle=\tiny, %行号字体用小号  
+numberstyle={\color[RGB]{0,192,192}\tiny} ,%设置行号的大小，大小有tiny,scriptsize,footnotesize,small,normalsize,large等  
+numbersep=8pt,  %设置行号与代码的距离，默认是5pt  
+basicstyle=\footnotesize, % 这句设置代码的大小  
+showspaces=false, %  
+flexiblecolumns=true, %  
+breaklines=true, %对过长的代码自动换行  
+breakautoindent=true,%  
+breakindent=4em, %  
+%escapebegin=\begin{CJK*}{GBK}{hei},escapeend=\end{CJK*},  
+aboveskip=1em, %代码块边框  
+tabsize=2,  
+showstringspaces=false, %不显示字符串中的空格  
+backgroundcolor=\color[RGB]{245,245,244},   %代码背景色  
+%backgroundcolor=\color[rgb]{0.91,0.91,0.91}    %添加背景色  
+escapeinside=``,  %在``里显示中文  
+%% added by http://bbs.ctex.org/viewthread.php?tid=53451  
+fontadjust,  
+captionpos=t,  
+framextopmargin=2pt,framexbottommargin=2pt,abovecaptionskip=-3pt,belowcaptionskip=3pt,  
+xleftmargin=4em,xrightmargin=4em, % 设定listing左右的空白  
+texcl=true,% 设定中文冲突，断行，列模式，数学环境输入，listing数字的样式  
+%extendedchars=false,columns=flexible,mathescape=true  
+%numbersep=-1em  
+}  
+\title{Git Note}
+\author{徐国盛}
+\begin{document}
+\maketitle
+\tableofcontents
+\section{仓库初始化}
+
+\textbullet 初始化一个仓库，使用\textit{git init}命令
+
+\textbullet 添加到Git仓库，分为两步
+
+\qquad \textbullet 第一步，使用命令\textit{git add}, 可以反复多次使用,
+	添加多个文件。
+
+\qquad \textbullet 第二步，使用命令\textit{git commit}, 完成.\textit{-m}
+参数提供提交说明
+\section{时光穿梭}
+\textbullet 随时掌握工作区的状态，使用\textit{git status}命令。
+
+\textbullet 如果\textit{git status}告诉有文件被修改过， 用\textit{git diff}
+可以查看修改内容。
+\subsection{版本回退}
+
+\textbullet 查看历史记录，\textit{git log},参数\textit{- -pretty=oneline}每次提交信息显示在同一行
+
+\textbullet \textit{HEAD}是当前版本,上一版本为\textit{HEAD \^}，前100版本\textit{HEAD~100}，回到之前版本的命令为\textit{git reset - -hard HEAD \^}，回到当前版本找到相应的commit id, 使用命令如\textit{git reset - -hard 363333}
+\section{远程仓库}
+
+\textbullet 在用户主目录下，看看有没有.ssh目录，如果有，看此目录下有无id\_rsa和id\_rsa.pub。如果有直接跳到下一步，否则,打开shell，创建SSH Key：
+
+\textit{ssh-keygen -t rsa -C "youremail@example.com"}
+
+注意，邮件地址为自己的邮件地址。这样.ssh目录下会有id\_rsa和id\_rsa.pub两个文件，这两个就是SHH Key密钥,id\_rsa是私钥，不能泄漏；id\_rsa.pub是公钥，可以告诉别人。
+
+\textbullet 登录Github，打开“Account settings“，“SSH Keys“页面。点击“Add SSH Key“, 填上任意Title，在Key文本框里粘贴id\_rsa.pub文件中的内容。点击“Add Key“，就可以看到添加的Key。
+\subsection{添加远程库}
+
+\textbullet 登录Github，点击右上角“Create a new repo“。创建新仓库。在“Reposity name“ 填入仓库名。
+
+\textbullet 从本地关联库
+
+\textit{git remote add origin git@github.com:appsoner/learngit.git}
+
+\textbullet 将本地库的所有内容推送到远程库上。
+
+\textit{git push -u origin master}
+
+由于远程库是空的，我们第一次推送master分支时,加上\textit{-u}参数，Git不但会把本地的master分支内容推送到远程新的master分支,还会把本地的master分支与远程的master分支关联起来,在以后的推送或者拉取时就可以简化命令。
+
+\textbullet 本次本地提交后，只要有必要，就可以使用命令\textit{git push origin master}推送新修改。
+\subsection{从远程仓库克隆}
+\textit{git clone}
+
+\textbullet 克隆远程仓库
+
+\textit{git clone git@github.com:appsoner/gitskills.git}
+
+\textbullet Git支持多种协议, 包括https, 但通过ssh支持原生git协议速度最快。
+\subsection{创建于合并分支}
+
+查看分支 \textit{git branch}
+
+创建分支 \textit{git branch name}
+
+切换分支 \textit{git checkout name}
+
+创建~$+$~切换分支 \textit{git checkout -b name}
+
+合并某分支到当前分支 \textit{git merge name}
+
+删除分支 \textit{git branch -d name}
+\subsection{解决冲突}
+当Git无法自动合并分支时,就必须首先解决冲突。解决冲突后，在提交，合并完成。
+
+用\textit{git log - -graph}命令可以看到分支合并图。如
+
+\textit{git log - -graph - -pretty=oneline - -abbrev-commit	}
+\end{document}
+

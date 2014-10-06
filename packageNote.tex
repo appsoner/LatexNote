@@ -1,0 +1,323 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{CJKutf8}
+%\DeclareUnicodeCharacter{0020}{~}
+%\setCJKmainfont{KaiTi}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\title{R Packages Note}
+\author{Appsoner}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\begin{CJK*}{UTF8}{gkai}
+\maketitle
+\tableofcontents
+%\section{R packages}
+\section{ggplot2}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\subsection{qplot}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1410}\hlstd{)}
+\hlstd{dsmall} \hlkwb{<-} \hlstd{diamonds[}\hlkwd{sample}\hlstd{(}\hlkwd{nrow}\hlstd{(diamonds),} \hlnum{100}\hlstd{), ]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+尝试\textbf{qplot}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{opts_chunk}\hlopt{$}\hlkwd{set}\hlstd{(}\hlkwc{fig.height} \hlstd{=} \hlnum{5}\hlstd{)}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= diamonds)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/firstPlot1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(}\hlkwd{log}\hlstd{(carat),} \hlkwd{log}\hlstd{(price),} \hlkwc{data} \hlstd{= diamonds)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/firstPlot2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, x}\hlopt{*}\hlstd{y}\hlopt{*}\hlstd{z,} \hlkwc{data} \hlstd{= diamonds)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/firstPlot3} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{colour} \hlstd{= color)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/firstPlot4} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{shape} \hlstd{= cut)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/firstPlot5} 
+
+\end{knitrout}
+通过\textbf{I()}手动设定图形属性,使用透明属性\textbf{alpha}，~$1/10$~重叠~$10$~后变得不透明。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{alpha} \hlstd{=} \hlkwd{I}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{10}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/I___alpha1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{alpha} \hlstd{=} \hlkwd{I}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{100}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/I___alpha2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{alpha} \hlstd{=} \hlkwd{I}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{200}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/I___alpha3} 
+
+\end{knitrout}
+添加平滑曲线，通过参数\em{se}决定是否需要划出置信区间。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/add_line1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/add_line2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),} \hlkwc{se} \hlstd{= F)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/add_line3} 
+
+\end{knitrout}
+\em{method}决定平滑方法，\em{span}控制平滑程度，~$O$~(很不平滑)到~$1$~(很平滑)
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),} \hlkwc{span} \hlstd{=} \hlnum{0.2}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# geom\_smooth: method="{}auto"{} and size of largest group is <1000, so using loess. Use 'method = x' to change the smoothing method.}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/span1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),} \hlkwc{span} \hlstd{=} \hlnum{1}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# geom\_smooth: method="{}auto"{} and size of largest group is <1000, so using loess. Use 'method = x' to change the smoothing method.}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/span2} 
+
+\end{knitrout}
+通过mgcv包拟合一个广义可加模型。对于大数据，超过~$1000$~默认使用~$y~s(x, bs = "cs")$~。此外，还有$lm$和$rlm$，后者更加稳健，对异常值不敏感。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(mgcv)}
+\hlkwd{library}\hlstd{(MASS)}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),}
+      \hlkwc{method} \hlstd{=} \hlstr{"gam"}\hlstd{,} \hlkwc{formula} \hlstd{= y} \hlopt{~} \hlkwd{s}\hlstd{(x))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/method1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),}
+      \hlkwc{method} \hlstd{=} \hlstr{"gam"}\hlstd{,} \hlkwc{formula} \hlstd{= y} \hlopt{~} \hlkwd{s}\hlstd{(x,} \hlkwc{bs} \hlstd{=} \hlstr{"cs"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/method2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),}
+      \hlkwc{method} \hlstd{=} \hlstr{"lm"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/method3} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat, price,} \hlkwc{data} \hlstd{= dsmall,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"point"}\hlstd{,} \hlstr{"smooth"}\hlstd{),}
+      \hlkwc{method} \hlstd{=} \hlstr{"rlm"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/method4} 
+
+\end{knitrout}
+观察连续变量随分类变量的水平变化。通过箱形图和扰定点图来观察。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(color, price}\hlopt{/}\hlstd{carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"jitter"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/category1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(color, price}\hlopt{/}\hlstd{carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"boxplot"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/category2} 
+
+\end{knitrout}
+为了看清出数据的集中范围，我们可以通过调节透明度来调节图形重叠。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(color, price}\hlopt{/}\hlstd{carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"jitter"}\hlstd{),} \hlkwc{alpha} \hlstd{=} \hlkwd{I}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{5}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/ad_overlap1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(color, price}\hlopt{/}\hlstd{carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"jitter"}\hlstd{),} \hlkwc{alpha} \hlstd{=} \hlkwd{I}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{50}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/ad_overlap2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(color, price}\hlopt{/}\hlstd{carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"jitter"}\hlstd{),} \hlkwc{alpha} \hlstd{=} \hlkwd{I}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{200}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/ad_overlap3} 
+
+\end{knitrout}
+直方图和密度曲线图。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"histogram"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# stat\_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/his_density1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"density"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/his_density2} 
+
+\end{knitrout}
+调节平滑程度是十分重要的，尝试多种组距；组距较大，显示总体特征那；组距小，突出细节。组距通过\em{binwidth}来调节。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"histogram"}\hlstd{,} \hlkwc{binwidth} \hlstd{=} \hlnum{1}\hlstd{,}
+      \hlkwc{xlim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{3}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/binwidth1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"histogram"}\hlstd{,} \hlkwc{binwidth} \hlstd{=} \hlnum{0.1}\hlstd{,}
+      \hlkwc{xlim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{3}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/binwidth2} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"histogram"}\hlstd{,} \hlkwc{binwidth} \hlstd{=} \hlnum{0.01}\hlstd{,}
+      \hlkwc{xlim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{3}\hlstd{))}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: position\_stack requires constant width: output may be incorrect}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/binwidth3} 
+
+\end{knitrout}
+在不同组之间进行比较，加上一个类别变量，也叫做\textbf{图形映射}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"histogram"}\hlstd{,} \hlkwc{fill} \hlstd{= color)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# stat\_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.}}\end{kframe}
+\includegraphics[width=\maxwidth]{figure/shape_projection1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(carat,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"density"}\hlstd{,} \hlkwc{colour} \hlstd{= color)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/shape_projection2} 
+
+\end{knitrout}
+条形图，\em{weight}对连续性变量进行加权处理（如对连续型变量进行分组求和。
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(color,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"bar"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/bar1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{qplot}\hlstd{(color,} \hlkwc{data} \hlstd{= diamonds,} \hlkwc{geom} \hlstd{=} \hlstr{"bar"}\hlstd{,} \hlkwc{weight} \hlstd{= carat)} \hlopt{+}
+\hlkwd{scale_y_continuous}\hlstd{(}\hlstr{"carat"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/bar2} 
+
+\end{knitrout}
+
+
+
+
+
+
+\section{shiny}
+\section{quantmod}
+\input{./rPackageNote/quantmod}
+\newpage
+\end{CJK*}
+\end{document}

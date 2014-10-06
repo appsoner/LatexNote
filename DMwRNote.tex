@@ -1,0 +1,114 @@
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{%  
+		alsolanguage=Java,  
+		%language={[ISO]C++},       %language为，还有{[Visual]C++}  
+		%alsolanguage=[ANSI]C,      %可以添加很多个alsolanguage,如alsolanguage=matlab,alsolanguage=VHDL等  
+		%alsolanguage= tcl,  
+		alsolanguage= XML,  
+		tabsize=4, %  
+			frame=shadowbox, %把代码用带有阴影的框圈起来  
+			commentstyle=\color{red!50!green!50!blue!50},%浅灰色的注释  
+			rulesepcolor=\color{red!20!green!20!blue!20},%代码块边框为淡青色  
+			keywordstyle=\color{blue!90}\bfseries, %代码关键字的颜色为蓝色，粗体  
+			showstringspaces=false,%不显示代码字符串中间的空格标记  
+			stringstyle=\ttfamily, % 代码字符串的特殊格式  
+			keepspaces=true, %  
+			breakindent=22pt, %  
+			numbers=left,%左侧显示行号 往左靠,还可以为right，或none，即不加行号  
+			stepnumber=1,%若设置为2，则显示行号为1,3,5，即stepnumber为公差,默认stepnumber=1  
+			%numberstyle=\tiny, %行号字体用小号  
+			numberstyle={\color[RGB]{0,192,192}\tiny} ,%设置行号的大小，大小有tiny,scriptsize,footnotesize,small,normalsize,large等  
+			numbersep=8pt,  %设置行号与代码的距离，默认是5pt  
+			basicstyle=\footnotesize, % 这句设置代码的大小  
+			showspaces=false, %  
+			flexiblecolumns=true, %  
+			breaklines=true, %对过长的代码自动换行  
+			breakautoindent=true,%  
+			breakindent=4em, %  
+			escapebegin=\begin{CJK*}{GBK}{hei},escapeend=\end{CJK*},  
+		aboveskip=1em, %代码块边框  
+			tabsize=2,  
+		showstringspaces=false, %不显示字符串中的空格  
+			backgroundcolor=\color[RGB]{245,245,244},   %代码背景色  
+			%backgroundcolor=\color[rgb]{0.91,0.91,0.91}    %添加背景色  
+			escapeinside=``,  %在``里显示中文  
+			%% added by http://bbs.ctex.org/viewthread.php?tid=53451  
+			fontadjust,  
+		captionpos=t,  
+		framextopmargin=2pt,framexbottommargin=2pt,abovecaptionskip=-3pt,belowcaptionskip=3pt,  
+		xleftmargin=4em,xrightmargin=4em, % 设定listing左右的空白  
+			texcl=true,% 设定中文冲突，断行，列模式，数学环境输入，listing数字的样式  
+			%extendedchars=false,columns=flexible,mathescape=true  
+			%numbersep=-1em  
+} 
+\title{Data Mining with R Note}
+\author{Appsoner}
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Statistical Learning}
+\subsection{Supervised versus Unsupervised Leaining}
+
+Most statistical learning problems fall into one of two categories:supervised and unsupervised.
+
+\textbf{Supervised Learning}: for each observation of the predictor measurement(s) $x_i,i = 1,\dots,n$ there is an associated response measurement ~$y_i$~.
+
+\textbf{Unsupervised Learning}: for every observation $i=1,\dots,n$, we observe a vector of measurements $x_i$ but no associated response $y_i$.
+\subsection{Measuring the Quality of Fit}
+In the regression setting, the most commonly-used measure is the mean squared error (\textbf{MSE}), given by
+\begin{equation}\label{eq1.2.1}
+MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{f}(x_i))^2 
+\end{equation}
+
+The \textbf{MSE}~(\ref{eq1.2.1})~is computed using the training data that used to fit the model, and so should be referred to as $\mathit{training MSE}$. Rather, \textbf{we are interested in the accurancy of the predictions that we obtain when we apply our methods to previously unseen test data}. We are really not interested in wether $\hat{f}(x_i)\approx y_i$, instead, we wanyt to wether $\hat{f}(x_0)$ is approximately equal to $y_0$ , where $(x_0, y_0)$ is previously unseen test observation not used to train the statistical learning method. In other words, if we had a large numver of test observations, we would compute 
+\begin{equation}
+Ave(\hat{f}(x_0)-y_0)^2
+\end{equation}
+the average squared prediction error for these test observations $(x_0,y_0)$.
+\subsection{The Bias-Variance Trade-Off}
+
+The U-shape in the test MSE curves turns out to be the result of two properties of statistical learning methods. For an given value $x_0$, can always be decomposed into the sum of three fundermental quantities: the variance of $\hat{f}(x_0)$, the squared bias of $\hat{f}(x_0)$ and the variance of the error terms $\epsilon$. That is
+\begin{equation}
+E(y_0-\hat{f}(x_0))^2 = Var(\hat{f}(x_0)) + [Bias(\hat{f}(x_0))]^2 + Var(\epsilon).
+\end{equation}
+Here the notation $E(y_0-\hat{f}(x_0))$ defines the \textit{expected test MSE}, and refers to the average test MSE that we would obtain if we repeatly estimated $f$ using a large number of training sets, and tested each at $x_0$. The overall expected test MSE can be computed by averaging $E(y_0-\hat{f}(x_0))$ over all possible values of $x_0$ in the test set.
+
+\textbf{We need to select a statistical learning method that simultaneously achieves \textit{low variance} and \textit{low bias}. Obiviously, the MSE can never lie below $Var(\epsilon)$}.\textit{Variance} refers to the amount by which $\hat{f}$ would change if we estimated it  using a differnt training data set. Since different training data are used to fit the statistical learning method, different training data sets will result in a different $\hat{f}$. \textit{Bias} refers to the error that is introduced by approximating a real-life problem.
+
+\textbf{The relative rate of change of these two quantities determines whether the test MSE increase or decrease.} As we increase the flexibility of a class of methods, the bias tends to initially decrease faster than the variance increase. Conquently, the expected test MSE declines. However, at some point increasing flexibility has litte impact on bias but starts to significantly increase the variance. When this happens the test \textbf{MSE} increase. Note we observe the pattern of decreasing test MSE followed by increasing test \textbf{MSE} leading to U-shape of test \textbf{MSE}.	
+\subsection{The Classification Setting}
+
+Suppose that we seek to estimate $f$ on basis of training observations $\lbrace(x_1,y_1), \dots, (x_n,y_n)\rbrace$, where now $y_1, \dots, y_n$ are qualitative. The most common approach for quantifying the accurancy of our estimate $\hat{f}$ is the training \textit{error rate}, the proportion of mistakes that are made if we apply our estimate $\hat{f}$ to training observations.
+\begin{equation}
+\frac{1}{n}\sum_{i=1}^nI(y_i\neq \hat{y}_i)
+\end{equation}
+Here $\hat{y}_i$ is the predicted class label for the \textit{i}th observation using $\hat{f}$.
+
+The \textit{text error} rate associated with a set of test observations of form $(x_0,y_0)$ is given by
+\begin{equation}
+Ave(I(y_0\neq \hat{y}_0)),
+\end{equation}
+On average, by a simple classifier that \textbf{assigns each to the most likely class, given its predictor vlaues.} In the other words, we should simply assign a test observation with predictor vector $x_0$ to the class $j$ for which 
+\begin{equation}
+Pr(Y = j|X = x_0) 
+\end{equation}
+is largest. This very simple classifier is called the \textit{Bays classifier}. The Bayes classifier produces the lowest possible test error rate, called the \textit{Bays error rate}. The error rate at $X = x_0$ will be $1-{mas}_jPr(Y = j|X = x_0)$. In general, the overall Bays error rate is given by 
+\begin{equation}
+1 - E({max}_jPr(Y = j|X)),
+\end{equation}
+where the expection averages the probability over all possible values of $X$.
+
+Many approaches attempt to estimate the conditional distribution of $Y$ given $X$, and then	classify a given observation to the class with highest estimated probability. One such method is the \textit{K-nearest neighbours}\textbf{(KNN)} classfier. Give a positive integer $K$ and a test observation $x_0$, the \textbf{KNN} classifier first identifies the $K$ points in the training data that are closest to $x_0$, represent by $\mathcal{N}_0$. It then estimates the conditional probability for class $j$ as the fraction of points in $\mathcal{N}_0$ whose reponse values equal $j$:
+\begin{equation}
+Pr(Y = j|X = x_0) = \frac{1}{K}\sum_{i\in\mathcal{N}_0}I(y_i = j).
+\end{equation}
+Finally, \textbf{KNN} applies Bayes rule and classifies the test observation
+$x_0$ to the class with the largest probability.
+
+\textbf{$1/K$ increases, or equivalently as the number of neighbours $K$ decreas, the flexibility increases}
+$underline{lim}_{n \rightarrow \inf}$
+\end{document}

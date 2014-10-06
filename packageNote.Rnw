@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage{CJKutf8}
+%\DeclareUnicodeCharacter{0020}{~}
+%\setCJKmainfont{KaiTi}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\title{R Packages Note}
+\author{Appsoner}
+\begin{document}
+\begin{CJK*}{UTF8}{gkai}
+\maketitle
+\tableofcontents
+%\section{R packages}
+\section{ggplot2}
+<<load_package>>=
+library(ggplot2)
+@
+\subsection{qplot}
+<<data>>=
+set.seed(1410)
+dsmall <- diamonds[sample(nrow(diamonds), 100), ]
+@
+尝试\textbf{qplot}
+<<firstPlot, fig.height= 5>>=
+opts_chunk$set(fig.height = 5)
+qplot(carat, price, data = diamonds)
+qplot(log(carat), log(price), data = diamonds)
+qplot(carat, x*y*z, data = diamonds)
+qplot(carat, price, data = dsmall, colour = color)
+qplot(carat, price, data = dsmall, shape = cut)
+@
+通过\textbf{I()}手动设定图形属性,使用透明属性\textbf{alpha}，~$1/10$~重叠~$10$~后变得不透明。
+<<I()_alpha, fig.height= 5>>=
+qplot(carat, price, data = diamonds, alpha = I(1/10))
+qplot(carat, price, data = diamonds, alpha = I(1/100))
+qplot(carat, price, data = diamonds, alpha = I(1/200))
+@
+添加平滑曲线，通过参数\em{se}决定是否需要划出置信区间。
+<<add_line, message=FALSE, fig.height=5>>=
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"))
+qplot(carat, price, data = diamonds, geom = c("point", "smooth"))
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), se = F)
+@
+\em{method}决定平滑方法，\em{span}控制平滑程度，~$O$~(很不平滑)到~$1$~(很平滑)
+<<span, fig.height=5>>=
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), span = 0.2)
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), span = 1)
+@
+通过mgcv包拟合一个广义可加模型。对于大数据，超过~$1000$~默认使用~$y~s(x, bs = "cs")$~。此外，还有$lm$和$rlm$，后者更加稳健，对异常值不敏感。
+<<method, message=FALSE>>=
+library(mgcv)
+library(MASS)
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), 
+      method = "gam", formula = y ~ s(x))
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), 
+      method = "gam", formula = y ~ s(x, bs = "cs"))
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), 
+      method = "lm")
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"), 
+      method = "rlm")
+@
+观察连续变量随分类变量的水平变化。通过箱形图和扰定点图来观察。
+<<category>>=
+qplot(color, price/carat, data = diamonds, geom = c("jitter"))
+qplot(color, price/carat, data = diamonds, geom = c("boxplot"))
+@
+为了看清出数据的集中范围，我们可以通过调节透明度来调节图形重叠。
+<<ad_overlap>>=
+qplot(color, price/carat, data = diamonds, geom = c("jitter"), alpha = I(1/5))
+qplot(color, price/carat, data = diamonds, geom = c("jitter"), alpha = I(1/50))
+qplot(color, price/carat, data = diamonds, geom = c("jitter"), alpha = I(1/200))
+@
+直方图和密度曲线图。
+<<his_density>>=
+qplot(carat, data = diamonds, geom = "histogram")
+qplot(carat, data = diamonds, geom = "density")
+@
+调节平滑程度是十分重要的，尝试多种组距；组距较大，显示总体特征那；组距小，突出细节。组距通过\em{binwidth}来调节。
+<<binwidth>>=
+qplot(carat, data = diamonds, geom = "histogram", binwidth = 1, 
+      xlim = c(0, 3))
+qplot(carat, data = diamonds, geom = "histogram", binwidth = 0.1, 
+      xlim = c(0, 3))
+qplot(carat, data = diamonds, geom = "histogram", binwidth = 0.01, 
+      xlim = c(0, 3))
+@
+在不同组之间进行比较，加上一个类别变量，也叫做\textbf{图形映射}
+<<shape_projection>>=
+qplot(carat, data = diamonds, geom = "histogram", fill = color)
+qplot(carat, data = diamonds, geom = "density", colour = color)
+@
+条形图，\em{weight}对连续性变量进行加权处理（如对连续型变量进行分组求和。
+<<bar>>=
+qplot(color, data = diamonds, geom = "bar")
+qplot(color, data = diamonds, geom = "bar", weight = carat) +
+scale_y_continuous("carat")
+@
+
+
+
+
+
+
+\section{shiny}
+\section{quantmod}
+\input{./rPackageNote/quantmod}
+\newpage
+\end{CJK*}
+\end{document}

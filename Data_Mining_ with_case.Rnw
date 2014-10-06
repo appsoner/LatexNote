@@ -1,0 +1,14 @@
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\title{Data Mining with case}
+\authot{Guosheng}
+\begin{document}
+\maketitle
+\tableofcontents
+
+
+
+
+
+\end{document}

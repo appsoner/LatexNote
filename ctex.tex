@@ -1,0 +1,171 @@
+\documentclass{article}
+\usepackage{amsfonts}
+%\documentclass[UTF8]{ctexart}
+\newtheorem{proof}{PROOF}
+\usepackage{amsmath}
+%\setCJKmainfont{KaiTi}
+\newtheorem{theorem}{THEOREM}
+\title{Homework of Large Sample Theory}
+\author{Guosheng Xu}
+
+\begin{document}
+\maketitle
+\begin{theorem}
+Let ~$(X_1,Y_1),(X_2,Y_2),...$~be a sample from a bivariate distribution with finite fourth moments, ~$EX^4$~and~$EY^4$~. Then,
+
+
+\begin{equation*}
+\sqrt{n}\left[
+\begin{bmatrix}
+s_x^2\\
+s_{xy}^2 \\
+s_y^2
+\end{bmatrix}
+-
+\begin{bmatrix}
+\sigma_x^2 \\
+\sigma_{xy}^2 \\
+\sigma_y^2  
+\end{bmatrix}
+\right]
+\stackrel{\ell}{\longrightarrow}N\left(\textbf{0},
+			\begin{bmatrix}
+			C(XX,XX) &C(XX,XY) &C(XX,YY) \\
+			C(XX,XY) &C(XY,XY) &C(XY,YY) \\
+			C(XX,YY) &C(XY,YY) &C(YY,YY)
+			\end{bmatrix}\right)
+\end{equation*}
+where
+\begin{equation*}
+C(XX,XX) = cov((X-\mu_x)^2,(X-\mu_x)^2) = E(X-\mu_x)^4 - (E(X-\mu_x)^2)^2, \\
+\end{equation*}
+\begin{equation*}
+\begin{aligned}
+C(XX,XY) &= cov((X-\mu_x)^2,(X-\mu_x)(Y-\mu_y)) \\
+    	 &= E(X-\mu_x)^3(Y-\mu_y) - \sigma_x^2\sigma_{xy}, \text{etc.}
+\end{aligned}
+\end{equation*}
+
+\end{theorem}
+\begin{proof}
+Assume without loss of generality that ~$\mu_x=\mu_y=0$~(or equivalently,work with~$ X_j-\mu$~).First,use Central Limit Theorem to find the joint asymptotic distribution of~$ \textbf{M}_n = (m_x,m_y,m_{xx},m_{xy},m_{yy})^T$~, where ~$m_x = (1/n)\sum_1^nX_j, m_{xx} = (1/n)\sum_1^nX_j^2$~and$~m_{xy} = (1/
+			n)\sum_1^nX_jY_j$~,etc.Then, apply Cramer's Theorem to the function, ~$g(\textbf{M}_n) = (m_{xx}-m_x^2,m_{xy}-m_xm_y,m_{yy}-m_y^2)^T$~.
+
+\begin{equation*}
+\begin{array}{c}
+ \sqrt{n}\left[
+ \begin{bmatrix}
+m_x\\
+m_y \\
+m_{xx} \\
+m_{xy} \\
+m_{yy}
+\end{bmatrix}
+ -
+ \begin{bmatrix}
+ 0 \\
+ 0 \\
+ \sigma_x^2 \\
+ EXY \\
+ \sigma_y^2
+ \end{bmatrix}
+ \right]
+\stackrel{\ell}{\longrightarrow} \\
+		\\
+N\left(\textbf{0},
+\begin{bmatrix}
+\sigma_x^2 &EXY        &EX^3         &EX^2Y       &EXY^2 \\ 
+EXY        &\sigma_y^2 &EX^2Y        &EXY^2       &EY^3 \\
+EX^3       &EX^2Y      &var(X^2)     &cov(X^2,XY) &cov(X^2,Y^2) \\
+EX^2Y      &EXY^2      &cov(X^2,XY)  &var(XY)     &cov(XY,Y^2) \\
+EXY^2      &EY^3       &cov(X^2,Y^2) &cov(XY,Y^2) &var(Y^2)   
+\end{bmatrix}\right)
+\end{array}
+ \end{equation*}
+ and note that ~$g(\textbf{M}_n) = (m_{xx}-m_x^2,m_{xy}-m_xm_y,m_{yy}-m_y^    2)^T$~,
+ we can get 
+\begin{equation*}
+\dot{g}(m_x,m_y,m_{xx},m_{xy},m_{yy}) = \left(\begin{array}{ccccc}
+			-2m_x &0    &1    &0  &0 \\
+			-m_y  &-m_x &0    &1  &0 \\
+			0     &-2m_y&0    &0  &1  
+			\end{array}\right)
+\end{equation*}
+and 
+\begin{equation*}
+\dot{g}(0,0,\sigma_x^2,EXY,\sigma_y^2) = \left(\begin{array}{ccccc}
+			0 &0 &1 &0 &0 \\
+			0 &0 &0 &1 &0 \\
+			0 &0 &0 &0 &1
+			\end{array}\right)						
+\end{equation*}
+According to the theorem following
+\begin{theorem}
+(Cramer).Let~$\mathbf{g}$~be a mapping~$\mathbf{g}:\mathbb{R}^d\rightarrow\mathbb{R}^k$~such that
+~$\dot{\mathbf{g}}(\mathbf{x})$~is continuous in a neighborhood of ~$\mathbf{\mu}\in \mathbb{R}^d$~.
+If~$\mathbb{X}_n$~is a sequence of d-dimensional random vectors such that~$\sqrt{n}(\mathbb{X}_n-\mathbb{\mu})\stackrel{\ell}{\longrightarrow}\mathbb{X}$~,then~$\sqrt{n}(\mathbf{g}(\mathbf{X}_n)-\mathbf{g}(\mathbf{\mu}))\stackrel{\ell}{\longrightarrow}\dot{\mathbf{g}}(\mathbf{\mu})\mathbf{X}$~.In particular, if~$\sqrt{n}(\mathbf{X}_n-\mathbf{\mu})\stackrel{\ell}{\longrightarrow}N(\mathbf{0},\mathbf{\sum})$~where~$\mathbf{\sum}$~is a~$d\times d$~covariance matrix,then
+\begin{equation*}
+\sqrt{n}(\mathbf{g}(\mathbf{X}_n)-\mathbf{g}(\mu))\stackrel{\ell}{\longrightarrow}N(\mathbf{0},\dot{\mathbf{g}}(\mu)\mathbf{\sum}\dot{\mathbf{g}}(\mu)^T)
+\end{equation*}
+\end{theorem}
+We know 
+\begin{equation*}
+\mathbf{\sum} = 
+\begin{bmatrix}
+ \sigma_x^2 &EXY        &EX^3         &EX^2Y       &EXY^2 \\ 
+ EXY        &\sigma_y^2 &EX^2Y        &EXY^2       &EY^3 \\
+ EX^3       &EX^2Y      &var(X^2)     &cov(X^2,XY) &cov(X^2,Y^2) \\
+ EX^2Y      &EXY^2      &cov(X^2,XY)  &var(XY)     &cov(XY,Y^2) \\
+ EXY^2      &EY^3       &cov(X^2,Y^2) &cov(XY,Y^2) &var(Y^2)   
+ \end{bmatrix}
+\end{equation*}
+and then get the following equation by Cramer theorem.
+\begin{equation*}
+\sqrt{n}(\mathbf{g}(\mathbf{M}_n)-\mathbf{g}(\mu_n))\stackrel{\ell}{\longrightarrow}N\left(\mathbf{0}, 
+			\begin{bmatrix}
+			var(X^2)     &cov(X^2,XY) &cov(X^2,Y^2) \\
+		    cov(X^2,XY)  &var(XY)     &cov(XY,Y^2) \\
+			cov(X^2,Y^2) &cov(XY,Y^2) &var(Y^2)
+		   \end{bmatrix}\right)	   
+\end{equation*}
+Obviously
+\begin{equation*}
+\begin{aligned}
+\mathbf{\sum} & = \begin{bmatrix}
+		         var(X^2)     &cov(X^2,XY) &cov(X^2,Y^2) \\
+			    cov(X^2,XY)  &var(XY)     &cov(XY,Y^2) \\
+				 cov(X^2,Y^2) &cov(XY,Y^2) &var(Y^2)
+				 \end{bmatrix} \\
+			  &=\begin{bmatrix}
+                cov(XX,XX)     &cov(XX,XY)     &cov(XX,YY) \\
+                cov(XY,XY)     &cov(XY,XY)     &cov(XY,YY) \\
+                cov(XX,YY)     &cov(XY,YY)     &cov(YY,YY)
+                \end{bmatrix}
+\end{aligned}
+\end{equation*}
+This solution comes with assuming~$\mu_x=\mu_y=0$~, if we replace~$X,Y$~by~$X-\mu_x,Y-\mu_y$, then a conclusion being more general is conclued. That is
+\begin{equation*}
+\sqrt{n}\left[
+\begin{bmatrix}
+s_x^2\\
+s_{xy}^2 \\
+s_y^2
+\end{bmatrix}
+ -
+\begin{bmatrix}
+\sigma_x^2 \\
+\sigma_{xy}^2 \\
+\sigma_y^2  
+\end{bmatrix}
+\right]
+\stackrel{\ell}{\longrightarrow}N\left(\textbf{0},
+\begin{bmatrix}
+C(XX,XX) &C(XX,XY) &C(XX,YY) \\
+C(XX,XY) &C(XY,XY) &C(XY,YY) \\
+C(XX,YY) &C(XY,YY) &C(YY,YY)
+\end{bmatrix}\right)
+\end{equation*}
+It is also the theorem at the beginning.
+\end{proof}
+\end{document}
+
