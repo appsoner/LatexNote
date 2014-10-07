@@ -6,6 +6,51 @@
 \begin{document}
 \maketitle
 \tableofcontents
+\section{Detecting Fraudulent Transactions}
+<<load_packages>>=
+library(DMwR)
+library(Hmisc)
+@
+
+<<load_data>>=
+load("sales.RData")
+head(sales)
+@
+看一下数据的总体信息
+<<summary>>=
+summary(sales)
+describe(sales)
+@
+查看一下有多少销售人员和产品种类
+<<levels>>=
+nlevels(sales$ID)
+nlevels(sales$Prod)
+@
+检查销售数量和销售额同时没有的数量
+<<loss>>=
+length(which(is.na(sales$Quant) & is.na(sales$Val)))
+@
+另一种更有效的获取方式
+<<anotherGetLoss>>=
+sum(is.na(sales$Quant)&is.na(sales$Val))
+@
+<<table>>=
+table(sales$Insp)/nrow(sales)*100
+@
+我们发现每个人或每个产品的交易量变化很大
+<<transactions_plot>>=
+totS <- table(sales$ID)
+totP <- table(sales$Prod)
+barplot(totS, main = "Transactions per salespeople",
+        names.arg = "", xlab = "Salespeople", 
+        ylab = "Amount")
+barplot(totP, main = "Transactions per product",
+        names.arg = "", xlab = "Products", 
+        ylab = "Amount")
+@
+
+
+
 
 
 
