@@ -260,10 +260,83 @@ jvm在调用主函数时，传入的是new String[0];
 
 设置class文件按路径
 
-\textit{set classpath=.;c:\myclass}
+\textit{set classpath=.;c\\:\\myclass}
 \subsubsection{生成说明文档}
 
 \textit{javadoc -d ~/Document/java -author -version ArrayTool.java}
+\subsubsection{静态代码块}
+
+静态代码块特点:随着类的加载而执行，只执行一次，并且只执行一次，优先于主函数执行。
+
+用于给类进行初始化的。
+
+运行优先顺序：静态代码块~$\geq$~ 构造代码块~$\geq$~ 构造函数
+\lstinputlisting[language = Java]{../java/StaticCodeDemo.java} 
+\subsubsection{对象初始化过程}
+
+\textbullet 因为new用到了Person.class，所以会先找到Person.class文件并加载到内存中。
+
+\textbullet 执行该类中的static代码块，如果有的话，给Person.class类进行初始化。
+
+\textbullet 在堆内存中开辟空间，分配内存地址。
+
+\textbullet 在堆内存中建立对象的特有属性，并进行默认初始化。
+
+\textbullet 对属性进行显示初始化。
+
+\textbullet 对对象进行构造代码块初始化。
+
+\textbullet 对对象进行对应的构造函数初始化。
+
+\textbullet 将内存地址付给栈内存中的p变量。
+
+对象初始化过程如下图所示：
+\begin{figure}[ht]
+\centering
+\includegraphics[width = 12cm]{../Dia/duixiang_chushi.jpeg}
+\caption{对象初始化过程}
+\end{figure}
+
+\lstinputlisting[language = Java]{../java/PersonDemo.java}
+\subsubsection{对象调用成员过程}
+\begin{figure}[ht]
+\centering
+\includegraphics[width = 12cm]{../Dia/duixiang_dycy.jpeg}
+\caption{对象成员调用过程}
+\end{figure}
+\subsubsection{单例设计模式}
+
+单例设计模式：解决一个类在内存只存在一个对象。
+
+想要保证对象唯一。
+\textbullet 为了避免其他程序过多的建立该类对象，先禁止其他程序建立该类对象。
+
+\textbullet 还为了让其他程序可以访问到该类对象，只好在本类中，自定义一个对象。
+
+\textbullet 为了方便其他程序对自定义对象的访问，可以对外提供一些访问的方式。
+
+这三步怎样用代码代替
+\textbullet 将构造函数私有化。
+
+\textbullet 在类中创建一个本类对象。
+
+\textbullet 提供一个方法可以获取到该对象。
+
+对于单例模式的内存运作过程如下图：
+\begin{figure}[ht]
+\centering
+\includegraphics[width = 12cm]{../Dia/SingleDemo.jpeg}
+\caption{单例模式的内存运作过程}
+\end{figure}
+\lstinputlisting[language = Java]{../java/SingleDemo.java}
+\subsubsection{单例设计模式2}
+
+饿汉式：就是上一节提到的，先初始化对象。
+
+懒汉式：对象方法被调用时，才初始化，也叫做对象的延时加载。
+
+\textbf{开发时，定义单例，建议使用饿汉式}。
+\lstinputlisting[language = Java]{../java/SingleDemo2.java}
 \end{document}
 
 
