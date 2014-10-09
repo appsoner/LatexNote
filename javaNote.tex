@@ -467,6 +467,24 @@ final：最终。作为一个修饰符。
 
 一个抽象类的练习
 \lstinputlisting[language = Java] {../java/AbstractTest.java}
+
+\subsubsection{模板方法模式}
+
+需求：获取一段程序运行时间。
+
+原理：获取程序开始和结束事件相减即可
+
+获取时间：System.currectTimeMillis();
+
+当代码完成优化后，就可以解决这类问题。
+
+这种方式为模板方法设计模式。
+
+什么是模板方法？
+
+在定义功能时，功能的一部分是确定的，但有一部分是不确定的，而确定的部分使用不确定的部分，那么这时就将不确定的部分暴露出去，又该类的子类去完成。	
+
+\lstinputlisting[language = Java]{../java/TemplateDemo.java}
 \subsubsection{接口}
 
 接口：初期理解，可以认为一个特殊的抽象类。当类中的方法都是抽象的，该类可以通过接口的形式来表示。
