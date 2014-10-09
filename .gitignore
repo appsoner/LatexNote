@@ -6,6 +6,7 @@
 *.Rdata
 *.Rhtml
 *.Rmw
+*.swp
 *.html
 *.tex~
 *.Rhistory

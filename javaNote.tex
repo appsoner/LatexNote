@@ -464,5 +464,52 @@ final：最终。作为一个修饰符。
 
 \textbf{特殊：}抽象类中可以不定义抽象方法,这样做仅仅是不让该类建立对象。
 \lstinputlisting[language = Java]{../java/AbstractDemo.java}
+
+一个抽象类的练习
+\lstinputlisting[language = Java] {../java/AbstractTest.java}
+\subsubsection{接口}
+
+接口：初期理解，可以认为一个特殊的抽象类。当类中的方法都是抽象的，该类可以通过接口的形式来表示。
+
+class 用于定义类。
+
+interface 用于定义接口。
+
+接口在定义时，格式特点在于：
+
+1.接口中常见的定义:常量，抽象方法。
+
+2.接口中的成员都有固定的修饰符。
+
+\quad \textbullet 常量：public static final
+
+\quad \textbullet 方法：public abstract
+
+\textbf{记住：}接口中的成员都是public的。
+
+接口：是不可以创建对象的.因为有抽象方法。需要被子类实现，子类对接口中的抽象
+方法全部覆盖后，子类才可以实例化。否则子类是一个抽象类。
+
+接口可以被类多实现，也是对多继承不支持的转换形式，Java支持多实现。
+
+接口与接口之间支持继承，多继承。
+
+接口的特点:
+
+\textbullet 接口是对外暴露的规则。
+
+\textbullet 接口时程序的功能扩展。降低了耦合性。
+
+\textbullet 接口可以用来多实现。
+
+\textbullet 类与接口的关系是实现关系，而且类可以继承一个类的同时实现多个接口。
+
+\textbullet 接口于接口之间可以有继承关系，也可以有多继承关系。
+
+\lstinputlisting[language = Java]{../java/InterfaceDemo.java}
+接口的举例实现。类时is a。是确定有的，接口时like a。时可能有的。当具有接口的功能时，就实现接口。
+
+\lstinputlisting[language = Java]{../java/InterfaceTest.java}
 \end{document}
+
 
