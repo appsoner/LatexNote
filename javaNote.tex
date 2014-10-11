@@ -5,6 +5,17 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage[%dvipdfm,  %pdflatex,pdftex这里决定运行文件的方式不同
+pdfstartview=FitH,
+CJKbookmarks=true,
+bookmarksnumbered=true,
+bookmarksopen=true,
+colorlinks, %注释掉此项则交叉引用为彩色边框(将colorlinks和pdfborder同时注释掉)
+pdfborder=001,   %注释掉此项则交叉引用为彩色边框
+linkcolor=green,
+anchorcolor=green,
+citecolor=green
+]{hyperref}  
 \lstset{%  
 alsolanguage=Java,  
 %language={[ISO]C++},       %language为，还有{[Visual]C++}  
@@ -528,6 +539,130 @@ interface 用于定义接口。
 接口的举例实现。类时is a。是确定有的，接口时like a。时可能有的。当具有接口的功能时，就实现接口。
 
 \lstinputlisting[language = Java]{../java/InterfaceTest.java}
-\end{document}
+\subsubsection{多态}
 
+\textbullet \textbf{多态的概念}
+	
+多态：可以理解为事物存在的多种体现形态。
+
+人：男人，女人
+动物：猫，狗
+
+猫 x = new 猫();
+动物 x = new 猫();
+
+\textbullet \textbf{多态的基本体现}
+	
+\quad 父类的引用指向自己的子类对象。
+
+\quad 父类的引用也可以接受自己的子类对象。
+
+\textbullet \textbf{多态的前提}
+
+\quad 必须是类与类之间有关系，要么继承，要么实现。通常还得有一个前提：存在覆盖。
+
+\textbullet \textbf{多态的好处}
+
+\quad 多态的出现大大提高了程序的扩展性。
+
+\textbullet \textbf{多态的弊端}
+
+\quad 提高了扩展性，但是只能使用父类的引用访问父类中的成员。
+
+\textbullet 多态的应用
+
+\textbullet \textbf{多态出现代码中的特点(多态使用的注意事项)}
+\lstinputlisting[language = Java]{../java/DuoTaiDemo.java}
+
+多态可以同时操作很多对象。建立一个工具类，具有共同的属性，多态产生同一个大类型，通过对大类型的引用，可以操作多个小类型。因此，提高了扩展性。
+\lstinputlisting[language = Java]{../java/DuoTaiDemo3.java}
+
+\textbullet \textbf{多态成员中非静态函数的特点：}
+
+\quad 在编译时期：参阅引用型变量所属的类中是否有调用方法。如果有，编译通过，否则，编译失败；
+
+\quad 在运行时期：参阅对象所属的类中是否有调用的方法。
+
+\quad 简单总结就是：成员函数在多态调用时，编译看左边,运行看右边。
+
+\textbullet \textbf{多态中，成员变量的特点：}
+
+\quad 无论编译和运行，都参考左边（引用型变量所属的类）。
+
+\textbullet \textbf{多态中，静态成员函数的特点：}
+
+\quad 无论编译和运行，都参考左边（引用型变量所属的类）。
+\lstinputlisting[language = Java]{../java/DuoTaiDemo4.java}
+
+\textbf{实例}
+\lstinputlisting[language = Java]{../java/DuoTaiDemo5.java}
+\lstinputlisting[language = Java]{../java/DBOperate.java}
+\subsubsection{Object类}
+
+Object:是所有对象的直接或者间接父类。该类中定义的肯定是所有对象都具备的功能。
+
+Object类中已经提供了对对象是否相同的比较方法。
+
+如果自定义类中也有比较相同的功能，没有必要重新定义。只要沿袭父类的功能，建立自己特有的比较内容，这就是覆盖。
+\lstinputlisting[language = Java]{../java/ObjectDemo.java}
+\subsubsection{内部类}
+
+\textbf{内部类的访问规则}
+
+\textbullet 内部类可以直接访问外部类中的成员，包括私有private。之所以可以直接访问外部类中的成员，是因为内部类中持有了一个外部类的引用，格式：外部类名.this
+
+\textbullet 内部类可以被私有private修饰（成员位置上）
+
+\textbf{访问格式：}
+
+\textbullet 当定义内部类在外部类的成员位置上时，而且非私有，可以在外部其他类中，直接建立内部对象。
+
+格式：外部类名.内部类名 变量名 = 外部类对象.内部类对象;
+
+\qquad Outer.Inner in = new Outer().new Inner();
+
+\textbullet 当内部类在成员位置上，就可以被成员修饰符所修饰。比如：
+
+private:将内部类在外部类中进行封装。
+
+static:内部类就具备static特性。当内部类被static修饰后，只能访问外部类中的static成员。出现了访问局限。
+
+当其他外部类中，如何直接访问static类中的非静态成员呢？
+
+new Outer.Inner().function();
+
+在其他外部类中，如何直接访问static类中的静态成员呢？
+
+new Outer.Inner.function();
+
+注意：当内部类中定义了静态成员，该类必须是静态的。
+
+	当外部类中的静态方法访问内部类时，内部类也必须是static的。
+
+当描述事物时，事物的内容中还有事物，该事物用内部类来描述。因为内部事物在使用外部事物的内容。
+\lstinputlisting[language = Java]{../java/InnerClassDemo.java}
+
+\textbf{内部类被定义在局部时}
+
+\textbullet 不可以被成员修饰符修饰。局部内部类不能被静态和私有修饰。
+
+\textbullet 可以访问外部类中的成员，因为还持有外部类的引用。但是不可以访问它所在局部中的变量，只能访问被final修饰的局部变量。	
+\lstinputlisting[language = Java]{../java/InnerClassDemo3.java}
+\subsubsection{匿名内部类}
+
+\textbullet 匿名内部类其实就是内部类的简写格式。
+
+\textbullet 定义内部类的前提：内部类必须继承一个类或者实现接口。
+
+\textbullet 匿名内部类的格式：new 父类或者接口(){定义子类的内容}
+
+\textbullet 其实匿名内部类就是一个匿名子对象。而且这个对象有点胖，可以理解为带内容的对象。
+
+\textbullet 匿名内部类中定义的方法最好不要超过3个。
+
+\lstinputlisting[language = Java]{../java/InnerClassDemo4.java}
+
+\textbf{实例}
+\lstinputlisting[language = Java]{../java/InnerClassTest.java}
+\end{document}
 
