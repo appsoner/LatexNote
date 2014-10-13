@@ -52,9 +52,12 @@
 %\DeclareUnicodeCharacter{0020}{~}
 %\setCJKmainfont{KaiTi}
 \usepackage{amsfonts}
-\usepackage[%dvipdfm,  %pdflatex,pdftex这里决定运行文件的方式不同
+\usepackage[%dvipdfm,  
+            %pdflatex,
+            %pdftex,%这里决定运行文件的方式不同
             pdfstartview=FitH,
-            CJKbookmarks=true,
+            unicode = true,
+            %CJKbookmarks=true,
             bookmarksnumbered=true,
             bookmarksopen=true,
             colorlinks, %注释掉此项则交叉引用为彩色边框(将colorlinks和pdfborder同时注释掉)
@@ -64,17 +67,29 @@
             citecolor=green
             ]{hyperref}  
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{graphicx}
-\title{综合评价——基于标准普尔指数的应用}
-\author{徐国盛 130509030005}
+\title{股票市场的预测——基于标准普尔指数}
+\author{徐国盛}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \begin{CJK*}{UTF8}{gkai}
 \maketitle
 \tableofcontents
+\section{写在前面}
+
+\textbullet 本文中的主要介绍一个数据分析的流程，文中的模型在实际中应用的价值不大（潜台词是别拿这玩意儿去捣鼓股票，尤其时在天朝，不然，你懂得。。。想玩股票的话，去16幢305找你们滴\textbf{刘伟}师兄，刘伟师兄可爱可爱为师弟师妹提供帮助了$\smallfrown\_\_\smallfrown$）。
+
+\textbullet 本文是在上学期综合评价作业基础上进行了修改，这个例子来自于\textit{Data Mining with cases study}这本书（应该是这个名字$>\_\_<$!）。
+
+\textbullet 本文给出了程序运行结果，但没有给出详细的程序代码（代码太长，相信大家也不愿看到一群英文字母带着七大姑八大姨开大会$\wedge\_\_\wedge$!!）。在\url{http://rpubs.com/appsoner/zonghepingjia}中，提供了本文中相关的所有的代码，并且配有相应的运算结果。如果对代码感兴趣，想运行相关代码，可直接在网页上复制代码然后粘贴运行。
+
+\textbullet 本文模拟基于ubuntu系统13.04 LTS, 酷睿双核，主频2.34GHZ，4G内存（写上这句纯属为了显的高端大气点儿，请自行略过）
+
+\textbullet 本文就讲了一件事，根据以往的数据计算一个指标，根据这个指标决定买入和卖出（有了这句话，摘要就成了打酱油的了$\sim>=<\sim$。下面开启装逼模式$\circledcirc\vartriangle\circledcirc$，进入正题。）
 \section{摘要}
 
-标准普尔指数是典型的时间序列，对时间序列的处理有许多成熟的方法。但在这里本文不采用时间序列的方法。而是通过确立一个指标进行相关的买入卖出的决策，并通过模拟选择出稳定模型，用选择出的模型进行交易，并通过相关统计量评价加以交易表现。本文旨在方法简便易懂,对应用的相关模型的参数设置尽量最简化。
+标准普尔指数是典型的时间序列，对时间序列的处理有许多成熟的方法。但在这里本文不采用时间序列的方法。而是通过确立一个指标进行相关的买入卖出的决策，并通过模拟选择出稳定模型，用选择出的模型进行交易，并通过相关统计量评价加以交易表现。本文旨在方法过程的描述,对应用的相关模型的参数设置尽量最简化。
 
 
 \begin{knitrout}
@@ -299,7 +314,7 @@ $$H[-(x_i - t)] = max(0, t - x_i) \quad H[+(x_i - t)] = max(0, x_i - t)$$
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-\subsection{支持向量机的测试结果}
+\subsubsection{支持向量机的测试结果}
 回归测试结果
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -324,7 +339,7 @@ $$H[-(x_i - t)] = max(0, t - x_i) \quad H[+(x_i - t)] = max(0, x_i - t)$$
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-\subsection{多元自适应样条测试结果}
+\subsubsection{多元自适应样条测试结果}
 多元自适应样条只是用于回归预测分析
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -800,174 +815,8 @@ $$H[-(x_i - t)] = max(0, t - x_i) \quad H[+(x_i - t)] = max(0, x_i - t)$$
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-\section{几点重要的说明}
 
-\textbullet 本文不是论文，尽管也尽量写成了论文的格式。在文中没有标注引用。
-
-\textbullet 本文中所涉及的程序代码较长，尽管文章也附上了程序，当不建议读者阅读纸质代码，在\url{http://rpubs.com/appsoner/zonghepingjia}中，提供了本文中相关的所有的代码，并且配有相应的运算结果。如果想运行相关代码，强烈建议在网页上复制代码然后粘贴运行。
-
-\textbullet 本文模拟基于ubuntu系统13.04 LTS, 酷睿双核，主频2.34GHZ，4G内存
-
-\textbullet 本文之附上部分代码。
-
-\textbullet 模拟部分是本文的重点。
-\section{附录(部分代码)}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{policy.1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{opened.pos}\hlstd{,} \hlkwc{money}\hlstd{,}
-                     \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{hold.time} \hlstd{=} \hlnum{10}\hlstd{,}
-                     \hlkwc{exp.prof} \hlstd{=} \hlnum{0.025}\hlstd{,} \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{)}
-\hlstd{\{}
-  \hlstd{d} \hlkwb{<-} \hlkwd{NROW}\hlstd{(market)} \hlcom{# this is the ID of today}
-  \hlstd{orders} \hlkwb{<-} \hlkwa{NULL}
-  \hlstd{nOs} \hlkwb{<-} \hlkwd{NROW}\hlstd{(opened.pos)}
-  \hlcom{#nothing to do!}
-  \hlkwa{if}\hlstd{(}\hlopt{!}\hlstd{nOs} \hlopt{&&} \hlstd{signals[d]} \hlopt{==} \hlstr{'h'}\hlstd{)} \hlkwd{return} \hlstd{(orders)}
-  \hlcom{#First lets check if we can open new positions}
-  \hlcom{#i)long positions}
-  \hlkwa{if}\hlstd{(signals[d]} \hlopt{==} \hlstr{'b'} \hlopt{&& !}\hlstd{nOs)\{}
-    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{money}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
-    \hlkwd{print}\hlstd{(quant)}
-    \hlkwa{if}\hlstd{(quant} \hlopt{>} \hlnum{0}\hlstd{)}
-      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,} \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{),}
-                                         \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
-                                         \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant,}
-                                                 \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                                   \hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp.prof),}
-                                                 \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                                   \hlstd{(}\hlnum{1} \hlopt{-} \hlstd{max.loss)),}
-                                         \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,}
-                                                    \hlstr{'close'}\hlstd{),}
-                                         \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
-                                         \hlstd{)}
-                      \hlstd{)}
-    \hlcom{#ii) short positions}
-  \hlstd{\}} \hlkwa{else if} \hlstd{(signals[d]} \hlopt{==} \hlstr{'s'} \hlopt{&& !}\hlstd{nOs) \{}
-    \hlcom{#This is the nr of stocks we already need to buy}
-    \hlcom{#because of currently opened short positions}
-    \hlstd{need2buy} \hlkwb{<-} \hlkwd{sum}\hlstd{(opened.pos[opened.pos[,} \hlstr{'pos.type'}\hlstd{]} \hlopt{== -}\hlnum{1}\hlstd{,}
-                               \hlstr{"N.stocks"}\hlstd{])}\hlopt{*}\hlstd{market[d,} \hlstr{'Close'}\hlstd{]}
-    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{(money}\hlopt{-}\hlstd{need2buy)}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
-    \hlkwa{if}\hlstd{(quant} \hlopt{>} \hlnum{0}\hlstd{)}
-      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
-                      \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{),}
-                                 \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
-                                 \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant, market[d,} \hlstr{'Close'}\hlstd{]}
-                                         \hlopt{*}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{exp.prof),}
-                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                           \hlstd{(}\hlnum{1} \hlopt{+} \hlstd{max.loss)),}
-                                 \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,}
-                                            \hlstr{'close'}\hlstd{),}
-                                 \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
-                                 \hlstd{)}
-                      \hlstd{)}
-  \hlstd{\}}
-  \hlcom{#let's check if we need to close positions}
-  \hlcom{#because their holding time is over }
-  \hlkwa{if}\hlstd{(nOs)}
-    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{nOs) \{}
-      \hlkwa{if}\hlstd{(d} \hlopt{-} \hlstd{opened.pos[i,} \hlstr{'Odate'}\hlstd{]} \hlopt{>=} \hlstd{hold.time)}
-        \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
-                        \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlopt{-}\hlstd{opened.pos[i,} \hlstr{'pos.type'}\hlstd{],}
-                                   \hlkwc{order.type} \hlstd{=} \hlnum{1}\hlstd{,}
-                                   \hlkwc{val} \hlstd{=} \hlnum{NA}\hlstd{,}
-                                   \hlkwc{action} \hlstd{=} \hlstr{'close'}\hlstd{,}
-                                   \hlkwc{posID} \hlstd{=} \hlkwd{rownames}\hlstd{(opened.pos)[i]}
-                                   \hlstd{)}
-                        \hlstd{)}
-        \hlstd{\}}
-  \hlstd{orders}
-\hlstd{\}}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{policy.2} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{signals}\hlstd{,} \hlkwc{market}\hlstd{,} \hlkwc{opened.pos}\hlstd{,} \hlkwc{money}\hlstd{,}
-                     \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,} \hlkwc{exp.prof} \hlstd{=} \hlnum{0.025}\hlstd{,}
-                     \hlkwc{max.loss} \hlstd{=} \hlnum{0.05}\hlstd{)}
-\hlstd{\{}
-  \hlstd{d} \hlkwb{<-} \hlkwd{NROW}\hlstd{(market)} \hlcom{#this is the ID of today}
-  \hlstd{orders} \hlkwb{<-} \hlkwa{NULL}
-  \hlstd{nOs} \hlkwb{<-} \hlkwd{NROW}\hlstd{(opened.pos)}
-  \hlcom{#nothing to do}
-  \hlkwa{if}\hlstd{(}\hlopt{!}\hlstd{nOs} \hlopt{&&} \hlstd{signals[d]} \hlopt{==} \hlstr{'h'}\hlstd{)} \hlkwd{return} \hlstd{(orders)}
-  \hlcom{#First lets check if we can open new positions}
-  \hlcom{# i) long positions}
-  \hlkwa{if} \hlstd{(signals[d]} \hlopt{==} \hlstr{'b'}\hlstd{)\{}
-    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{money}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
-   \hlcom{# print(quant)}
-    \hlkwa{if} \hlstd{(quant} \hlopt{>} \hlnum{0}\hlstd{)}
-      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
-                      \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{),}
-                                 \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
-                                 \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant,}
-                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                           \hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp.prof),}
-                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                           \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{max.loss)}
-                                         \hlstd{),}
-                                 \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,}
-                                            \hlstr{'close'}\hlstd{),}
-                                 \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
-                                 \hlstd{)}
-                      \hlstd{)}
-  \hlstd{\}} \hlkwa{else if} \hlstd{(signals[d]} \hlopt{==} \hlstr{'s'}\hlstd{) \{}
-    \hlcom{#this is the money already commited to buy stocks}
-    \hlcom{#because of currently opened short positions}
-    \hlstd{need2buy} \hlkwb{<-} \hlkwd{sum}\hlstd{(opened.pos[opened.pos[,} \hlstr{'pos.type'}\hlstd{]} \hlopt{== -}\hlnum{1}\hlstd{,}
-                               \hlstr{"N.stocks"}\hlstd{])}\hlopt{*}\hlstd{market[d,} \hlstr{'Close'}\hlstd{]}
-    \hlstd{quant} \hlkwb{<-} \hlkwd{round}\hlstd{(bet}\hlopt{*}\hlstd{(money} \hlopt{-} \hlstd{need2buy)}\hlopt{/}\hlstd{market[d,} \hlstr{'Close'}\hlstd{],} \hlnum{0}\hlstd{)}
-    \hlkwa{if}\hlstd{(quant} \hlopt{>}\hlnum{0}\hlstd{)}
-      \hlstd{orders} \hlkwb{<-} \hlkwd{rbind}\hlstd{(orders,}
-                      \hlkwd{data.frame}\hlstd{(}\hlkwc{order} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{),}
-                                 \hlkwc{order.type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{),}
-                                 \hlkwc{val} \hlstd{=} \hlkwd{c}\hlstd{(quant,}
-                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                           \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{exp.prof),}
-                                         \hlstd{market[d,} \hlstr{'Close'}\hlstd{]}\hlopt{*}
-                                           \hlstd{(}\hlnum{1} \hlopt{+} \hlstd{max.loss)}
-                                         \hlstd{),}
-                                 \hlkwc{action} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'open'}\hlstd{,} \hlstr{'close'}\hlstd{,} \hlstr{'close'}\hlstd{),}
-                                 \hlkwc{posID} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{NA}\hlstd{)}
-                                 \hlstd{)}
-                      \hlstd{)}
-  \hlstd{\}}
-  \hlstd{orders}
-\hlstd{\}}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{start} \hlkwb{<-} \hlnum{1}
-\hlstd{len.tr} \hlkwb{<-} \hlnum{1000}
-\hlstd{len.ts} \hlkwb{<-} \hlnum{500}
-\hlstd{tr} \hlkwb{<-} \hlstd{start}\hlopt{:}\hlstd{(start}\hlopt{+}\hlstd{len.tr}\hlopt{-}\hlnum{1}\hlstd{)}
-\hlstd{ts} \hlkwb{<-} \hlstd{(start} \hlopt{+} \hlstd{len.tr)}\hlopt{:}\hlstd{(start}\hlopt{+}\hlstd{len.tr}\hlopt{+}\hlstd{len.ts}\hlopt{-}\hlnum{1}\hlstd{)}
-\hlcom{#generate the quotes for the testing period}
-\hlkwd{data}\hlstd{(GSPC)}
-\hlstd{date} \hlkwb{<-} \hlkwd{rownames}\hlstd{(Tdata.train[start}\hlopt{+}\hlstd{len.tr, ])}
-\hlstd{market} \hlkwb{<-} \hlstd{GSPC[}\hlkwd{paste}\hlstd{(date,} \hlstr{'/'}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{''}\hlstd{)][}\hlnum{1}\hlopt{:}\hlstd{len.ts]}
-\hlcom{#learining the model and obtaining its signal predictions}
-\hlkwd{library}\hlstd{(e1071)}
-\hlstd{s} \hlkwb{<-} \hlkwd{svm}\hlstd{(Tform, Tdata.train[tr, ],} \hlkwc{cost} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{gamma} \hlstd{=} \hlnum{0.01}\hlstd{)}
-\hlstd{p} \hlkwb{<-} \hlkwd{predict}\hlstd{(s, Tdata.train[ts, ])}
-\hlstd{sig} \hlkwb{<-} \hlkwd{trading.signals}\hlstd{(p,} \hlnum{0.1}\hlstd{,} \hlopt{-}\hlnum{0.1}\hlstd{)}
-\hlcom{#now using the simulated trader}
-\hlstd{t1} \hlkwb{<-} \hlkwd{trading.simulator}\hlstd{(market, sig,} \hlstr{'policy.1'}\hlstd{,}
-                      \hlkwd{list}\hlstd{(}\hlkwc{exp.prof} \hlstd{=} \hlnum{0.05}\hlstd{,} \hlkwc{bet} \hlstd{=} \hlnum{0.2}\hlstd{,}
-                           \hlkwc{hold.time} \hlstd{=} \hlnum{30}\hlstd{))}
-\hlstd{t1}
-\hlkwd{summary}\hlstd{(t1)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-
+\newpage
 \end{CJK*}
 \end{document}
 
