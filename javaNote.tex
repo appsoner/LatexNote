@@ -664,5 +664,101 @@ new Outer.Inner.function();
 
 \textbf{实例}
 \lstinputlisting[language = Java]{../java/InnerClassTest.java}
+\subsection{异常}
+\subsubsection{异常的概述}
+
+异常：就是程序在运行时出现的不正常情况。
+
+异常由来：问题也是现实生活中一个具体的事物，也可以通过java的形式进行描述，并封装成对象。其实就是java对不正常的情况进行描述的对象体现。
+
+对于问题的划分：两种：一种时严重的问题，一种是非严重的问题。
+
+\textbullet 对于严重的，java通过Error类进行描述。
+
+\qquad 对于Error一般不编写针对性的代码对其进行处理。
+
+\textbullet 对于非严重的，java通过Exception类进行描述。
+
+\qquad 对于Exception可以使用针对性的处理方式进行处理。
+
+无论Error或者Exception都有一些共性内容。比如：不正常情况的信息，引发原因等。
+
+\textit{Throwable}
+
+\qquad |--\textit{Error}
+
+\qquad |--\textit{Exception}
+\subsubsection{异常的处理}
+
+\textbullet java提供了特有的语句进行处理。
+
+try\{
+
+\qquad 需要被检测的代码
+
+\}
+
+catch (异常类 变量)\{
+
+\qquad 处理异常的代码;(处理方式)
+
+\}
+
+finally \{
+
+\qquad 一定会执行的语句
+
+\}
+
+\textbullet 对捕获的异常对象进行常见方法操作。
+
+\qquad String getMessage();获取异常信息。
+
+函数上声明异常。
+
+便于提高安全性，让调用处进行处理。不处理编译失败。
+
+对多异常的处理。
+
+\textbullet 声明异常时，建议声明更为具体的异常，这样处理的可以更具体。
+
+\textbullet 对方声明有几个异常，就对应有几个catch块，不要定以多余的catch块。
+如果多个catch块中的异常出现继承关系，父类异常catch放在最下面。
+
+建议在进行catch处理时，catch中一定要定义成具体处理方式。不要简单的定义一句 e.printStackTrace(),也不要简单的就书写一条输出语句。
+\lstinputlisting[language = Java]{../java/ExceptionDemo.java}
+
+\subsubsection{自定义异常}
+
+因为项目中会出现特有的问题，而这些问题并为被java描述，并封装对象。所以对于这些特有的问题可以按照java对问题封装的思想，将问题进行自定义的异常封装。
+
+自定义异常。
+
+需求：在本程序中，对于除数是负数，也视为是错误的是无法进行运算的。那么就需要对这个问题进行自定义描述。
+
+当在函数内部出现了throw抛出异常对象，那么就必须给出对应的处理动作。要么在内部try，catch处理。要么在函数上声明调用这处理。
+
+一般情况下，函数内出现异常，函数上需要声明。
+
+发现打印的结果只有异常的名称，却没有异常的信息。因为自定义的异常并未定义信息。
+
+如何定义异常信息呢？
+
+因为父类中已经把异常信息的操作都完成了。所以子类只要在构造时，将异常信息传递个父类通过super语句。
+
+\textbf{自定义异常：}必须是自定义类继承Exception。
+
+继承Exception的原因：异常体系有一个特点：因为异常类和异常对象都需要被抛出。他们都具有可抛性。这个可抛性时Throwable这个体系中的多有特点。
+
+只有这个体系中的类和对象才可以被throws和throw操作。
+
+throws和throw的区别：
+
+\textbullet throws 使用在函数上；throw 使用在函数内。
+
+\textbullet throws 后面跟的是异常类，可以跟多个。用逗号隔开；throw后面跟的是异常对象。
+
+\lstinputlisting[language = Java]{../java/ExceptionDemo3.java}
 \end{document}
+
 
