@@ -759,6 +759,282 @@ throws和throw的区别：
 \textbullet throws 后面跟的是异常类，可以跟多个。用逗号隔开；throw后面跟的是异常对象。
 
 \lstinputlisting[language = Java]{../java/ExceptionDemo3.java}
+
+\subsubsection{RuntimeException异常}
+
+Exception中有一个特殊的子类异常RuntimeException运行时异常。
+
+如果在函数内容抛出该异常，函数上可以声明，编译一样通过。
+
+如果在函数上声明改异常，调用者可以不用进行处理。编译一样通过。
+
+之所以不再函数上声明，是因为不需要让调用者处理。该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后，由程序员对代码进行修正。
+
+自定义异常时：如果该异常的发生，无法继续进行运算，就让自定义异常继承RuntimeException。
+
+对异常分两种：
+
+1.编译时被检测的异常。
+
+2.编译时不被检测的异常。（运行时异常。RuntimeException以及其子类）。
+\lstinputlisting[language = Java]{../java/ExceptionDemo4.java}
+\subsubsection{finally代码块}
+
+finally代码块：定义一定执行的代码。通常用于关闭资源。	
+\lstinputlisting[language = Java]{../java/ExceptionDemo5.java}
+
+\subsubsection{处理语句的其他格式}
+
+问题被解决，可以不用声明。有catch就是问题解决。没有catch就是没有处理。
+
+记住一点：catch是用于处理异常的。如果没有catch就代表没有被处理，如果该异常是检测性异常，那么必须声明
+
+\textbullet 第一个格式
+
+\textit{try} \{
+		
+	
+	
+	\}
+
+\textit{catch} \{
+	
+
+
+	\}
+
+\textbullet 第二种格式
+
+\textit{try}\{
+
+\}
+
+\textit{catch}()\{
+
+\}
+
+\textit{finally}\{
+
+\}
+
+\textbullet 第三种格式
+
+\textit{try} \{
+
+\}
+
+\textit{finally} \{
+
+\}
+\lstinputlisting[language = Java]{../java/ExceptionDemo6.java}
+
+\subsubsection{覆盖时的异常特点}
+
+异常在子类覆盖中的体现。
+
+\textbullet 子类在覆盖父类时，如果父类的方法抛出异常,那么子类的覆盖方法，只能抛出父类的异常或该异常的子类，或者不抛。
+
+\textbullet 如果父类的方法抛出多个异常，那么子类在覆盖该方法时，只能抛出父类异常的子集。
+
+\textbullet 如果父类或者接口的方法中没有异常抛出，那么子类在覆盖方法时也不可以抛出异常。如果子类方法发生了异常就必须进行try处理，绝对不能抛。
+
+\lstinputlisting[language = Java]{../java/ExceptionDemo7.java}
+
+\subsubsection{实例}
+\textbf{毕老师用电脑上课}
+
+开始思考上课中出现的问题。
+
+\textbullet 电脑蓝屏
+
+\textbullet 电脑冒烟
+
+要对问题进行描述，封装成对象。可是当冒烟发生后，会出现讲课进度无法继续。出现了讲师的问题：可是计划无法完成。
+
+\lstinputlisting[language = Java]{../java/ExceptionTest.java}
+
+\textbf{圆形和长方形面积}
+
+有一个长方形和圆形，都可以获取面积，如果出现非法值，视为获取面积时出现的问题。问题通过异常来表示。
+
+注意：先要对这个程序进行基本的设计。
+
+\lstinputlisting[language = Java]{../java/ExceptionTest1.java}
+\subsubsection{异常总结}
+
+\textbf{异常：}是对问题的描述。将问题进行对象的封装。
+
+\textbf{异常体系:}
+
+\textit{Throwable}
+
+\qquad |-- \textit{Error}
+
+\qquad |-- \textit{Exception}
+
+\qquad \qquad |-- \textit{RuntimeException}
+
+\textbf{异常体系的特点：}异常体系中的所有类以及建立的对象都具有可抛性。也就是说可以被throw和throws关键字所操作。只有异常体系具备这个特点。
+
+\textbf{throw和throws的特点：}
+
+\textbullet throw定义在函数内，用于抛出异常对象。
+
+\textbullet throws定义在函数上，用于抛出异常类，可以抛出多个用逗号隔开。
+
+当函数内容有throw抛出异常对象，并未进行异常处理。必须要在函数上声明。否则编译失败。
+
+注意：RuntimeException除外。也就是说，函数内如果抛出的是RuntimeException异常，函数上可以不用声明。
+
+\textbf{异常处理}
+
+如果函数声明了异常，调用者需要进行处理。处理方式可抛可try。
+
+异常有两种：
+
+\textbullet 编译时被检测异常。该异常如果在编译时没有处理（没有抛也没有try），编译失败。该异常被标识，代表着可以被处理。
+
+\textbullet 运行时异常（编译时不检测）。在编译时，不需要处理，编译器检查。该异常发生，建议不处理，让程序停止，需要对代码进行修正。
+
+\textbf{异常处理语句}
+
+\textit{try}\{
+
+\qquad 需要检测的代码
+
+\}
+
+\textit{catch}\{
+
+\qquad 处理异常的代码
+
+\}
+
+\textit{finally}\{
+
+一定会执行的代码
+
+\}
+
+有三种结合格式：
+
+\textbullet 第一种
+
+\textit{try}\{
+
+\}
+
+\textit{catch}\{
+
+\}
+
+\textbullet 第二种
+
+\textit{try}\{
+
+\}
+
+\textit{finally}\{
+
+\}
+
+\textbullet 第三种
+
+\textit{try}\{
+
+\}
+
+\textit{catch}\{
+
+\}
+
+\textit{finally}\{
+
+\}
+
+注意：
+
+\textbullet finally中定义的通常是关闭资源代码。因为资源必须要释放。
+
+\textbullet finally只有一种情况不会执行。当执行到System.out.exit(0);finally不会执行。
+
+\textbf{自定义异常}
+
+定义类继承Exception或者RuntimeException
+
+\textbullet 是为了让该自定义类具备可抛性。
+
+\textbullet 让该类具备操作异常的共性方法。
+
+当要定义自定义异常的信息时，可以使用父类已经定义好的功能。将异常信息传递给父类的构造函数。
+\begin{lstlisting}[language = Java]
+class MyException extends Exception{
+	MyException(String message) { 
+			super(message);
+	}
+}
+\end{lstlisting}
+
+自定义异常：按照java面向对象思想，将程序中出现的特有问题进行封装。
+
+\textbf{异常的好处}
+
+\textbullet 将问题进行封装。
+
+\textbullet 将正常流程代码和问题处理代码相分离，方便于阅读。
+
+\textbf{异常的处理原则}
+
+\textbullet 处理方式有两种：try或者throws
+
+\textbullet 调用到抛出异常功能时，抛出几个，就处理几个。一个try对应多个catch
+
+\textbullet 多个catch，父类的catch放到最下面。
+
+\textbullet catch内，需要定义针对性的处理方式。不要简单的定义printStackTrace，输出语句也不要写。
+
+当捕获到的异常，本功能处理不了时，可以继续在catch中抛出。
+
+\begin{lstlisting}[language = Java]
+try{
+	throw new AException();
+}
+catch(AException) {
+	throw e;
+}
+\end{lstlisting}
+
+如果该异常处理不了，但并不属于该功能出现的异常。可以将异常转换后，再抛出和该功能相关的异常。
+
+或者异常可以处理，但需要将异常产生的和本功能相关的问题提供出去。让调用者知道并处理。也可以将捕获异常处理后，转换新的异常。
+\begin{lstlisting}[language = Java]
+try{
+	//对AException处理
+	throw new AException();
+}
+catch(AException) {
+	throw new BException();
+}
+\end{lstlisting}
+比如：汇款的例子
+
+\textbf{异常的注意事项}
+
+在子父类覆盖时：
+
+\textbullet 子类抛出的异常必须是父类异常的子类或者子集。
+
+\textbullet 如果父类或者接口没有抛出异常时，子类覆盖出现异常，只能try不能抛。
+
+\textbf{参阅}
+
+\textbullet ExceptionTest.java 老师用电脑上课。
+
+\textbullet ExceptionTest1.java 图形面积。
+
 \end{document}
+
+
+
 
 
