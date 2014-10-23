@@ -1053,6 +1053,10 @@ packa包不再当前目录下，需要设置classpath告诉jvm去哪里找指定
 
 \textbullet 包与包之间可以使用的权限只有两种，public和protected。
 
+编译命令：
+
+\textit{javac -d . PackDemo.java}
+
 \begin{tabular}{c|cccc}
 %\hline
            &public &protected &default &private \\ \hline
@@ -1064,6 +1068,23 @@ packa包不再当前目录下，需要设置classpath告诉jvm去哪里找指定
 
 
 \lstinputlisting[language = Java]{../java/PackageDemo.java}
+\lstinputlisting[language = Java]{../java/DemoA.java}
+\lstinputlisting[language = Java]{../java/DemoB.java}
+\lstinputlisting[language = Java]{../java/DemoC.java}
+
+\subsubsection{Jar包}
+
+\textbullet 将多个编译完成的class文件归档到一个Jar包中。
+
+\textit{jar -cf haha.jar packa pack}
+
+\textbullet 查看Jar包内容
+
+\textit{jar -tf haha.jar}
+
+\textbullet 将数据进行重定向
+
+\textit{jar -cvf a.jar$>\~/$Document}
 \end{document}
 
 
