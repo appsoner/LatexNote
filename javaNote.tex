@@ -1032,6 +1032,38 @@ catch(AException) {
 
 \textbullet ExceptionTest1.java 图形面积。
 
+\subsection{包}
+
+为了简化类名的书写，使用一个关键字，import。import导入的时包中的类。
+建议不要写通配符*，需要用到哪个包的那个类就导入那个类。
+
+建议报名不要重复，可以使用url来完成定义.因为url是唯一的。
+
+类名的全名为 包名.类名
+
+packa包不再当前目录下，需要设置classpath告诉jvm去哪里找指定的packa包。
+
+类公有后，被访问的成员也要公有才可以被访问。
+
+\textbf{总结：}
+
+\textbullet 包与包之间进行访问，被访问的类以及类中的成员，需要public修饰。
+
+\textbullet 不同包中的子类可以直接访问父类中被protected修饰的成员.
+
+\textbullet 包与包之间可以使用的权限只有两种，public和protected。
+
+\begin{tabular}{c|cccc}
+%\hline
+           &public &protected &default &private \\ \hline
+同一个类中 &ok     &ok        &ok      &ok \\
+同一个包中 &ok     &ok        &ok      &no \\
+子类       &ok     &ok        &no      &no \\
+不同包中   &ok     &no        &no      &no \\
+\end{tabular}
+
+
+\lstinputlisting[language = Java]{../java/PackageDemo.java}
 \end{document}
 
 
