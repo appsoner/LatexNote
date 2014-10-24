@@ -1183,7 +1183,7 @@ getName():获取线程名称。
 
 实现Runnable：线程代码存放在接口子类的run方法中。
 
-\subsubsection{多线程的锁}
+\subsubsection{多线程的锁-同步代码块}
 
 在下面例子中，打印出0，-1，-2等错票。
 
@@ -1206,8 +1206,168 @@ Java对多线程的安全问题提供了专业的解决方式，这就是\textbf
 
 \}
 
+对象如同锁，持有锁的线程可以在同步中执行。
+
+没有持有锁的线程及时获得cpu的执行权，也进不去，因为没有获取锁。
+
+同步的前提:
+
+\textbullet 必须要有两个或者两个以上的线程。
+
+\textbullet 必须是多个线程使用同一个锁。
+
+必须保证同步中只能有一个线程在运行。
+
+好处：解决了多线程的安全问题。
+
+弊端：多个线程需要判断锁，较为消耗资源。
 \lstinputlisting[language = Java]{../java/TicketDemo.java}
+
+\subsubsection{多线程的锁--同步函数}
+
+如何找到问题：
+
+\textbullet 明确那些代码时多线程运行代码。
+
+\textbullet 明确共享数据。
+
+\textbullet 明确多线程运行代码中那些语句时操作共享数据的。
+
+\lstinputlisting[language = Java]{../java/BankDemo.java}
+
+同步函数使用的哪一个锁？
+
+函数要被对象调用，那么函数都有一个所属对象的引用，就是this。所以同步函数使用的锁时this。
+
+通过该程序进行验证。
+
+使用两个线程来买票。
+
+一个线程在同步代码块中。
+
+一个线程在同步函数中。
+
+都在执行买票动作。
+
+\lstinputlisting[language = Java]{../java/ThisLockDemo.java}
+
+如果同步函数被静态修饰后，使用的锁是是什么？
+
+通过验证，发现不再是this。因为静态方法中也不可以定义this。
+
+静态进内存时，内存中没有本类对象，但是一定有该类对应的字节码文件对象。
+
+类名.class 该对象的类型是class。
+
+静态的同步方法：使用的锁时该方法所在类的字节码文件对象。 类名.class
+
+\lstinputlisting[language = Java]{../java/StaticMethodDemo.java}
+
+设计模式：先初始化对象。成为饿汉式。Single一进内存，就已经创建好了对象。
+
+\textit{class Single} \{
+
+\qquad \textit{private Static Single = s = new Single();}
+
+\qquad \textit{private Single()}\{\}
+
+\qquad \textit{public static Single getInstance() }\{
+
+\qquad \textit{return s;}
+
+\qquad \}
+
+\}
+
+懒汉式的形式：
+\lstinputlisting[language = Java]{../java/SingleDemo2.java}
+
+\subsubsection{死锁}
+
+同步嵌套同步，所却不同
+
+\lstinputlisting[language = Java]{../java/DeadLockDemo.java}
+
+\subsubsection{线程间通信}
+
+就是多个线程在操作同一个资源，但操作的动作不同。
+
+wait();
+
+notify();
+
+notifyAll();
+
+都使用在同步中，因为对持有监视器（锁）的线程操作。
+
+所以要使用在同步中，因为只有同步才具有所得概念。
+
+为什么这些操作线程的方法要定义在Object类中呢？
+
+因为这些方法在操作同步中线程时，都必须要标示他们所操作线程持有的锁，只有同一个锁上的被等待线程，可以被同一个锁上的notify唤醒。不可以对不同锁中的线程进行唤醒。也就是说等待和唤醒必须是同一个锁。
+
+而锁可以是任意对象，所以可以被任意对象调用的方法定义在Object类中。
+
+\lstinputlisting[language = Java]{../java/InputOutputDemo.java}
+
+对上面的代码进行优化。
+
+\lstinputlisting[language = Java]{../java/InputOutputDemo2.java}
+
+\subsubsection{notifyAll——唤醒对方线程}
+
+对于多个生产者消费者。
+
+为什么要定义while判断标记。
+
+原因：让被唤醒的线程再一次判断标记。
+
+为什么要定义notifyAll，
+
+因为需要唤醒对方线程。
+
+因为只用notify，容易出现值唤醒本方线程的情况。导致程序中的所有线程都等待。
+
+\lstinputlisting[language = Java]{../java/ProducerConsumerDemo.java}
+
+\subsubsection{Lock的应用}
+
+JDK1.5中提供了多线程升级解决方案。
+
+将同步Synchronized替换成显式Lock操作。
+
+将Object中的wait，notigy，notifyAll替换成了condition对象。
+
+该对象可以通过Lock锁进行获取。
+
+在该事例中，实现了本方只唤醒对方的操作。
+
+\lstinputlisting[language = Java]{../java/ProducerConsumerDemo2.java}
+
+\subsubsection{停止线程}
+
+stop方法已经过时。
+
+如何停止线程呢？
+
+只有一种，run方法结束。
+
+开启多线程运行，运行代码通常是循环结构。
+
+只要控制住循环，就可以让run方法结束，也就是线程结束。
+
+特殊情况：
+
+当先成处于冻结状态。就不会读取到标记。那么线程就不会结束。
+
+当没有指定的方式让冻结的线程回复到运行状态时，这时需要对冻结进行清除。
+强制让线程恢复到运行状态中来。这样就可以操作标记让线程结束。
+
+Thread类中提供了方法interrupt();
+
+\lstinputlisting[language = Java]{../java/StopThreadDemo.java}
 \end{document}
+
 
 
 
