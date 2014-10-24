@@ -1087,7 +1087,7 @@ packa包不再当前目录下，需要设置classpath告诉jvm去哪里找指定
 \textit{jar -cvf a.jar$>~/$Document}
 
 \subsection{多线程}
-
+\subsubsection{多线程的实现方式}
 进程：是一个正在执行中的程序。
 
 \qquad 每一个进程执行都有执行的顺序。该顺序就是一个执行路径。
@@ -1109,7 +1109,7 @@ java VM 启动的时候会有意个进程java.exe
 
 通过API的查找，java已经提供了对线程这类的描述，就是Thread类。
 
-创建线程的第一种方式，继承Thread类。
+\textbf{创建线程的第一种方式，继承Thread类。}
 
 步骤：
 
@@ -1141,13 +1141,72 @@ Thread类用于描述线程。该类就定义了一个功能，用于存储线�
 
 Thread-编号，该编号从0开始。
 
-static Tread currentThread():获取当前线程对象。
+static Thread currentThread():获取当前线程对象。
 
 getName():获取线程名称。
 
 设置线程名称：setName或者构造函数。
 
 \lstinputlisting[language = Java]{../java/ThreadTest.java}
+
+\textbf{创建线程的第二种方式：实现Runnable接口}
+
+步骤：
+
+\textbullet 定义类实现Runnable接口
+
+\textbullet 覆盖Runnable接口中的run方法。
+
+\qquad 将线程要运行的代码存放在该run方法中。
+
+\textbullet 通过Thread类建立线程对象。
+
+\textbullet 将Runnable接口的子类对象作为实际参数传递给Thread的构造函数。
+
+\qquad 为什么要将Runnable接口的子类对象传递给Thread构造函数。
+
+\qquad 因为自定义的run方法所属的对象是Runnable接口的子类对象。
+
+\qquad 所以要让线程去执行指定对象的run方法。就必须明确run方法所属的对象。
+
+\textbullet 调用Thread类的start方法，开启线程，并调用Runnable接口的run方法。
+
+实现方式和继承方式有什么区别？
+
+实现方式的好处：避免了单继承的局限性。
+
+在自定义线程时，建议使用继承方式。
+
+两种方式的区别：
+
+继承Thread：线程代码存放在Thread子类的run方法中。
+
+实现Runnable：线程代码存放在接口子类的run方法中。
+
+\subsubsection{多线程的锁}
+
+在下面例子中，打印出0，-1，-2等错票。
+
+多线程的运行出现了安全问题。
+
+问题发生的原因：
+
+当多条语句在操作同一个线程的共享数据时，一个线程对多条语句值执
+行了一部分，还没执行完，另一个线程参与进来执行。导致共享数据的错误。
+
+解决的办法：
+
+对多条操作共享数据的语句，只能让一个线程都执行完。在执行过程中其他线程不可以参与执行。
+
+Java对多线程的安全问题提供了专业的解决方式，这就是\textbf{同步代码块}。
+
+\textit{synchronized(Object)} \{
+
+\qquad 需要被同步的代码
+
+\}
+
+\lstinputlisting[language = Java]{../java/TicketDemo.java}
 \end{document}
 
 
