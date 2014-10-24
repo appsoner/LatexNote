@@ -1084,10 +1084,54 @@ packa包不再当前目录下，需要设置classpath告诉jvm去哪里找指定
 
 \textbullet 将数据进行重定向
 
-\textit{jar -cvf a.jar$>\~/$Document}
+\textit{jar -cvf a.jar$>~/$Document}
 
 \subsection{多线程}
 
+进程：是一个正在执行中的程序。
+
+\qquad 每一个进程执行都有执行的顺序。该顺序就是一个执行路径。
+
+线程：就是一个进程中独立的控制单元。
+
+\qquad 就是进程中一个独立的控制单元。
+线程在控制着进程的执行。
+
+一个进程至少有一个线程。
+
+java VM 启动的时候会有意个进程java.exe
+
+该进程至少有一个线程负责java程序的执行。而且这个线程运行的代码存放在main方法中。该线程称之为\textbf{主线程}。
+
+扩展：其实更细节说明jvm，jvm启动不止一个线程，还有负责垃圾回收机制的线程。
+
+1.如何在自定义的代码中定义一个线程。
+
+通过API的查找，java已经提供了对线程这类的描述，就是Thread类。
+
+创建线程的第一种方式，继承Thread类。
+
+步骤：
+
+\textbullet 定义类继承Thread类。
+
+\textbullet 复写Thread类中的run方法。
+	
+\qquad 目的：将自定义的代码存储在run方法中，让线程运行。
+
+\textbullet 调用线程的start方法，该方法有两个作用：启动线程，调用run方法。
+
+发现运行结果每一次都不同。因为多个线程都获取CPU的执行权。cpu执行到谁，谁就运行。
+
+明确一点，在某一时刻，只能有一个程序在运行（多核除外）。CPU在做着快速切换，以达到看上区时同时运行的结果。
+
+我们可以形象的把多线程的运行比喻万恶为相互抢夺cpu的执行权。这就是多线程的一个特性：随机性。谁抢到，谁执行，至于执行多长，cpu说了算。
+
+为什么要覆盖run方法呢？
+
+Thread类用于描述线程。该类就定义了一个功能，用于存储线程要运行的代码，该存储功能就是run方法。也就是说，Thread中的run方法，用于存储线程要运行的代码。
+
+\lstinputlisting[language = Java]{../java/ThreadDemo.java}
 
 
 \end{document}
