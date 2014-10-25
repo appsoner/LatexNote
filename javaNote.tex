@@ -1524,6 +1524,137 @@ $\bigstar$ 转换，取出空格，比较。
 \lstinputlisting[language = Java]{../java/StringTest.java}
 
 \lstinputlisting[language = Java]{../java/StringTest3.java}
+
+\subsubsection{StringBuffer\&StringBuilder}
+
+StringBuffer是字符串缓冲区。是一个容器。
+
+\textbf{特点：}
+
+\textbullet 长度是可以变化的。
+
+\textbullet 可以直接操作多个数据类型。
+
+\textbullet 最终会通过toString编程字符串。
+
+C create U update R read D delete
+
+$\bigstar$ 存储
+
+\qquad StringBuffer append():将指定的数据作为参数添加到已有数据结尾处。
+
+\qquad StringBuffer insert(index, 数据):可以讲述据插入到指定index位置。
+
+$\bigstar$ 删除
+
+\qquad StringBuffer delete(start, end):删除缓冲区中的数据，包含start，不包含end。
+
+\qquad StirngBuffer deleteCharAt(index):删除指定位置的字符。
+
+$\bigstar$ 获取
+
+\qquad char charAt(int index)
+
+\qquad int indexOf(String str)
+
+\qquad int lastIndexOf(String str)
+
+\qquad int length()
+
+\qquad String substring(int start, int end)
+
+$\bigstar$ 修改
+
+\qquad StringBuffer replace(start, end, string);
+
+\qquad void setCharAt(int index, char ch);
+
+$\bigstar$ 反转
+
+\qquad StringBuffer reverse();
+
+$\bigstar$ 将缓冲区中的指定数据存储到指定字符数组中。
+
+\qquad void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin);
+
+JDK1.5版本之后出现了StringBuilder
+
+StringBuffer线程同步。
+
+StringBuilder线程不同步。
+
+以后开发建议使用StringBuilder
+
+升级三个因素：
+
+\textbullet 提高效率
+
+\textbullet 简化书写
+
+\textbullet 提高安全性
+
+\lstinputlisting[language = Java]{../java/StringBufferDemo.java}
+
+\subsubsection{基本数据类型包装类}
+
+\begin{tabular}{c|c}
+基本数据类型 &包装类\\\hline
+byte &Byte \\
+short &Short \\
+int   &Integer \\
+long  &Long \\
+boolean &Boolean \\
+float &Float \\
+double &Double \\
+char   &Character 
+\end{tabular}
+
+基本数据类型包装类的最常见作用，就是用于基本数据类型和字符串类型之间做转换。
+
+基本数据类型转还成字符串：
+
+\textbullet 基本数据类型+"";
+
+\textbullet 基本数据类型.toString(基本数据类型值);
+
+\qquad 如：Integer.toString(34);//将34整数变成"34";
+
+字符串转成基本数据类型：
+
+\textbullet xxx a = Xxx.parseXxx(String);
+
+\qquad int a = Integer.parseInteger("123");
+
+\qquad double b = Double.parseDouble("12.23");
+
+\qquad boolean b = Boolean.parseBoolean("false");
+
+\qquad Integer i = new Integer("123");
+
+\qquad int num = i.intValue();
+
+十进制转成其他禁止。
+
+\textbullet toBinaryString();
+
+\textbullet toHexString();
+
+\textbullet toOctalString();
+
+其他进制转成十进制。
+
+\textbullet parseInt(String, index);
+
+\lstinputlisting[language = Java]{../java/IntegerDemo.java}
+
+JDK1.5版本之后的新特性。
+
+\textbullet 自动装箱或拆箱
+
+\textbullet 当数值在byte范围内时，对于新特性，如果该数值已存在,不会再开辟新空间。
+
+\lstinputlisting[language = Java]{../java/IntegerDemo1.java}
+
 \end{document}
 
 
