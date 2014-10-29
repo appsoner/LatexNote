@@ -1669,7 +1669,7 @@ JDK1.5版本之后的新特性。
 下例中包含了其他函数。如isEmpty, removeAll等。
 \lstinputlisting[language = Java]{../java/CollectionDemo.java}
 
-\subsection{Lsit共性方法}
+\subsection{Lsit共性方法h和ListIterator迭代器}
 
 \textit{Collection}
 
@@ -1721,7 +1721,47 @@ ConcurrentModificationException。
 
 \lstinputlisting[language = Java]{../java/ListDemo.java}
 
+\subsection{Vector枚举}
 
+枚举就是Vector特有的取出方式。
+
+发现枚举和迭代器很像。
+
+其实枚举和迭代是一样的。
+
+因为枚举的名称以及方法的名称都过长。所以被迭代器取代了。
+
+\lstinputlisting[language = Java]{../java/VectorDemo.java}
+
+\subsection{LinkedList}
+
+LinkedList的特有方法：
+
+addFirst();
+addLast();
+
+获取元素，但不删除元素
+
+getFirst();
+getLast();
+
+获取元素，但有元素被删除。如果集合中没有元素，会出现NoSuchElementExcepiton。
+
+在JDK1.6c出现了替代方法。
+
+offerFirst();
+offerLast();
+
+获取元素，但不删除元素。如果集合中没有元素，会返回null。
+
+peekFirst();
+peekLast();
+
+获取元素，但是元素被删除。如果集合中没有元素，会返回null。
+pollFirst();
+pollLast();
+
+\lstinputlisting[language = Java]{../java/LinkedListDemo.java}
 \end{document}
 
 
