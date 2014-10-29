@@ -1655,7 +1655,75 @@ JDK1.5版本之后的新特性。
 
 \lstinputlisting[language = Java]{../java/IntegerDemo1.java}
 
+\section{集合框架}
+\subsection{共性方法和迭代器}
+
+\textbullet add方法的参数类型是Object。以便于接受任意类型的对象。
+
+\textbullet 集合中存储对象时对象的引用（地址）。
+
+什么是迭代器呢？
+
+其实就是集合的取出元素的方式。
+
+下例中包含了其他函数。如isEmpty, removeAll等。
+\lstinputlisting[language = Java]{../java/CollectionDemo.java}
+
+\subsection{Lsit共性方法}
+
+\textit{Collection}
+
+\qquad |-- \textit{List}:元素是有序的，元素可以重复。因为该集合体系有索引。
+
+\qquad \qquad |-- \textit{ArrayList}:底层的数组结构使用的是数组结构。特点在于：查询速度很快。但是增删稍慢。线程不同步。
+
+\qquad \qquad |-- \textit{LinkedList}:底层使用的时链表数据结构。特点：增删速度很快，查询速度稍慢。
+
+\qquad \qquad |-- \textit{Vector}:线程同步。被ArrayList替代。
+
+\qquad |-- \textit{Set}:元素是无序的，元素不可以重复。没有索引。
+
+List: 
+
+特有方法：
+
+增：
+
+add(index, element);
+
+addAll(index, Collection);
+
+删：
+
+remove(index);
+
+改：
+
+set(index, element);
+
+查
+
+get(index);
+
+subList(from, to);
+
+listIterator();
+
+List集合集合特有的迭代器，ListIterator是Iterator的子接口。
+
+在迭代时，不可以通过集合对象的方法操作集合中的元素。因为会发生并发修改异常
+ConcurrentModificationException。
+
+所以，在迭代时，只能通过迭代器的方法操作元素，可是Iterator的方法是有限的。
+只能对元素进行判断，取出，删除的操作。如果想要其他的操作，如添加，修改等，就需要使用其子接口。ListIterator。
+
+该接口只能通过List集合的ListIterator获取。
+
+\lstinputlisting[language = Java]{../java/ListDemo.java}
+
+
 \end{document}
+
 
 
 
