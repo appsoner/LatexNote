@@ -1655,8 +1655,8 @@ JDK1.5版本之后的新特性。
 
 \lstinputlisting[language = Java]{../java/IntegerDemo1.java}
 
-\section{集合框架}
-\subsection{共性方法和迭代器}
+\subsection{集合框架}
+\subsubsection{共性方法和迭代器}
 
 \textbullet add方法的参数类型是Object。以便于接受任意类型的对象。
 
@@ -1669,7 +1669,7 @@ JDK1.5版本之后的新特性。
 下例中包含了其他函数。如isEmpty, removeAll等。
 \lstinputlisting[language = Java]{../java/CollectionDemo.java}
 
-\subsection{Lsit共性方法h和ListIterator迭代器}
+\subsubsection{Lsit共性方法h和ListIterator迭代器}
 
 \textit{Collection}
 
@@ -1721,7 +1721,7 @@ ConcurrentModificationException。
 
 \lstinputlisting[language = Java]{../java/ListDemo.java}
 
-\subsection{Vector枚举}
+\subsubsection{Vector枚举}
 
 枚举就是Vector特有的取出方式。
 
@@ -1733,7 +1733,7 @@ ConcurrentModificationException。
 
 \lstinputlisting[language = Java]{../java/VectorDemo.java}
 
-\subsection{LinkedList}
+\subsubsection{LinkedList}
 
 LinkedList的特有方法：
 
@@ -1765,11 +1765,135 @@ pollLast();
 
 \lstinputlisting[language = Java]{../java/LinkedListDemo.java}
 
-\subsection{LinkedList练习}
+\subsubsection{LinkedList练习}
 
 \lstinputlisting[language = Java]{../java/LinkedListTest.java}
 
+\subsubsection{ArrayList练习}
+
+\textbullet 去除ArrayList集合中的重复元素。
+
+\lstinputlisting[language = Java]{../java/ArrayListTest.java}
+
+\textbullet 将自定义对象作为元素存储到ArrayList集合中，并取出重复元素。
+
+\lstinputlisting[language = Java]{../java/ArrayListTest2.java}
+
+\subsubsection{HashSet}
+
+\textit{|- -Set}:元素无序（存入和取出的顺序不一定一致），元素不可以重复。
+
+\qquad \textit{|- -HashSet}:底层数据结构是哈希表。
+
+\qquad \qquad HashSet是如何保证元素唯一性的？
+
+\qquad \qquad 是通过元素的两个方法，hashCode和equals来完成。
+
+\qquad \qquad 如果元素的HashCode值相同，才会判断equals是否为true。
+
+\qquad \qquad 如果元素的HashCode值不同，不会调用equals();
+
+\qquad \qquad \textbf{注意：}对于判断元素是否存在，以及删除等操作，以来的方法是元素的hashCode和equals方法。
+
+\qquad \textit{|- -TreeSet:}
+
+Set集合的功能和Collection是一致的。
+
+\lstinputlisting[language = Java]{../java/HashSetDemo.java}
+
+\subsubsection{HashSet存储自定义对象}
+
+\textbullet 向HashSet集合中存入自定义对象。姓名和年龄为同一个人（重复元素）。
+
+\lstinputlisting[language = Java]{../java/HashSetTest.java}
+
+\subsubsection{TreeSet}
+
+\textit{Set}:无序，不可以重复元素。
+
+\qquad \textit{|- - HashSet}:数据结构是哈希表，线程是非同步的。
+
+\qquad \qquad 保证元素唯一性的原理，判断元素的hashCode值是否相同。
+
+\qquad \qquad 如果相同，还会继续判断元素的equals方法是否为真。
+
+\qquad \textit{|- - TreeSet}:可以对Set集合中的元素进行排序。、
+
+\qquad \qquad 底层数据结构是二叉树。
+
+\qquad \qquad 保证元素唯一性的依据：
+
+\qquad \qquad compareTo 方法 return 0；；
+
+\textbullet TreeSet排序的第一种方式：让元素自身具备比较性，元素需要实现Comparable接口，覆盖compareTo方法。这种方式也成为元素的自然顺序，或者叫做默认顺序。
+
+\textbullet TreeSet集合的第二种排序方式：当元素自身不具备比较性时，或者具备的比较性不是所需要的。这就需要让集合自身具备比较性。\textbf{集合初始化时，就具备了比较性}
+
+\textbf{记住：排序时，当主要条件相同时，一定判断下一次要条件}
+
+\lstinputlisting[language = Java]{../java/TreeSetDemo.java}
+
+\subsubsection{Comparator比较器排序}
+
+当元素自身不具备比较性，或者具备的比较性不是所需要的。这时需要让容器自身具备比较性。
+
+定义了比较器，将比较器对象作为参数传递给TreeSet集合的构造函数。
+
+两种排序方式都存在时，以比较器为主。
+
+定义一个类，实现Comparator接口，实现compare方法。
+
+\lstinputlisting[language = Java]{../java/TreeSetDemo2.java}
+\subsection{TreeSet练习}
+
+\textbullet 按照字符串长度排序。字符串本身不具备比较性	。但是他的比较方式不是所需要的。这样就只能使用比较器。
+
+\lstinputlisting[language = Java]{../java/TreeSetTest.java}
+
+\subsection{泛型概述}
+
+泛型：JDK1.5版本以后出现的新特性，用于解决安全问题，是一个安全机制。
+
+好处
+
+\textbullet 将运行时期出现的问题ClassCastException转移到了编译时期。
+
+\qquad 方便于解决问题。让运行时期问题减少，安全。
+
+\textbullet 避免了强制转换的麻烦。
+
+泛型格式：通过<>定义要操作的引用数据类型。
+
+使用java提供对象时，什么时候写泛型呢？
+
+通常通常在集合框架中很常见。只要见到<>就要定义泛型。其实<>就是用来接受类型的。
+
+当使用集合时，将集合中要存储的数据类型作为参数传递到<>括号中即可。
+
+\lstinputlisting[language = Java]{../java/GenericDemo.java}
+
+\subsection{泛型使用}
+\lstinputlisting[language = Java]{../java/GenericDemo2.java}
+
+\subsection{泛型类}
+
+泛型前做法
+
+什么时候定义泛型类？
+
+当类中要操作的引用数据不确定的时候，早期定义Object来完成扩展。现在定义泛型来完成扩展。
+
+\lstinputlisting[language = Java]{../java/GenericDemo3.java}
+
+\subsection{泛型函数}
+
+\textbullet 泛型类定义的泛型，在整个类中有效,如果被方法使用，那么泛型类的对象明确要操作的具体类型后，所有操作方法要操作的类型就已经固定了。为了让不同的方法可以操作不同的类型，而且类型还不确定，那么可以将泛型定义在方法上。
+
+\textbullet 特殊之处：静态方法不可以访问类上定义的泛型。如果静态方法操作的引用数据类型不确定，可将泛型定义在方法上。
+
+\lstinputlisting[language = Java]{../java/GenericDemo4.java}
 \end{document}
+
 
 
 
