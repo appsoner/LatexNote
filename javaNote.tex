@@ -1907,6 +1907,69 @@ Set集合的功能和Collection是一致的。
 \textbullet ? super E: 可以接受E类型或者E的父类型。下限。
 
 \lstinputlisting[language = Java]{../java/GenericDemo6.java}
+\lstinputlisting[language = Java]{../java/GenericDemo7.java}
+
+\subsection{Map集合}
+\subsubsection{Map概述}
+
+Map集合：该集合存储键值对。一对一对往里存。而且要保证键的一致性。
+
+\textbullet 添加
+
+\qquad put(K key, V value);
+
+\qquad putAll(Map);
+
+\textbullet 删除
+
+\qquad clear();
+
+\qquad remove(Object key);
+
+\textbullet 判断
+
+\qquad containsKey();
+
+\qquad containsValue();
+
+\qquad isEmpty();
+
+\textbullet 获取
+
+\qquad get(Object key);
+
+\qquad size();
+
+\qquad values();
+
+\qquad entrySet();
+
+\qquad keySet();
+
+
+\em{map}
+
+\qquad |--\em{Hashtable}:底层是哈希表数据结构,不可以存入null作为键，null作为值的情况。该机核时线程同步的。JKD1.0。效率低。
+
+\qquad |--\em{HashMap}:底层是哈希表数据结构。允许使用null键null值，该集合是不同步的。JDK1.2。效率高。
+
+\qquad |--\em{TreeMap}:底层是二叉树数据结构。线程不同步。可以用于对Map集合中的键进行排序。和Set很像。Set集合使用了Map集合。
+
+\lstinputlisting[language = Java]{../java/MapDemo.java}
+\subsubsection{Map取出方法}
+
+map集合的两种取出方式：
+
+\textbullet Set<k> KeySet:将map中所有的键存入到Set集合。因为Set集合具备迭代器。所以可以通过迭代方式取出所有键，再根据get方法，获取每一个键对应的值。
+
+\textbf{Map集合取出原理}：将map集合转成Set集合。再通过迭代器取出。
+
+\textbullet Set<Map.Entry<k, v> entrySet> entrySet:将map集合中的映射关系存入到了Set集合中,而这个关系的数据类型就是：Map.Entry。
+
+
+$\bigstar$ 其实Entry也是一个接口，它时Map接口中的一个内部接口。
+
+\lstinputlisting[languege = Java]{../java/MapDemo2.java}
 \end{document}
 
 
