@@ -1976,7 +1976,49 @@ $\bigstar$ 其实Entry也是一个接口，它时Map接口中的一个内部接�
 \lstinputlisting[language = Java]{../java/MapTest2.java}
 \lstinputlisting[language = Java]{../java/MapTest3.java}
 \subsubsection{Map扩展}
+$\bigstar$ Map集合：该集合存储键值对。一对一往里存。而且要保证键的唯一性。
 
+\qquad \textbullet 添加
+
+\qquad \qquad put(K key, V value);
+
+\qquad \qquad putAll(Map);
+
+\qquad \textbullet 删除
+
+\qquad \qquad clear();
+
+\qquad \qquad remove(Object key);
+
+\qquad \textbullet 判断
+
+\qquad \qquad containsKey();
+
+\qquad \qquad containsValue();
+
+\qquad \qquad isEmpty();
+
+\qquad \textbullet 获取
+
+\qquad \qquad get(Object key);
+
+\qquad \qquad size();
+
+\qquad \qquad values();
+
+\qquad \qquad entrySet();
+
+\qquad \qquad keySet();
+
+\em{Map}
+
+\qquad |--\textit{Hashtable:}底层是哈希表结构，不可以存入null为键，null为值的情况。该集合时线程同步的。JDK1.0。效率低。
+
+\qquad |--\textit{HashMap}:底层是哈希表数据结构。允许使用null值null键，该集合时不同步的。JDK1.2.效率高。
+
+\qquad |--\textit{TreeMap}:底层是二叉树结构。线程不同步。可以用于给map集合中的键进行排序。和Set很像。Set底层就使用了Map集合。
+
+\lstinputlisting[language=Java]{../java/MapDemo3.java}
 \end{document}
 
 
